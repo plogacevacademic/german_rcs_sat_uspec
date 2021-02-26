@@ -277,19 +277,27 @@ data_loc <- within(data_loc, {
 })
 
 
-
-# NOTE: 
-# There are two participants who didn't rate a significant poriton of the grammatical conditions acceptable 
-# (i.e., proporiton of 'yes' responses is close the one in the ungrammatical condition)
-# Not excluding for now.
-#
-#    amb   high  low   none
-# 6  0.98  0.11  0.97  0.09
-# 7  1.00  0.09  0.98  0.02
-
-with(subset(data_rc, time>4), tapply(responseGrammatical, list(subject, condition), mean)) %>% round(2)
-# excluded_participants = c(6, 7)
-# data_rc = subset(data_rc, !(subject %in% excluded_participants) )
+# 
+# # NOTE: 
+# # There are two participants who didn't rate a significant portion of the grammatical conditions acceptable 
+# # (i.e., proporiton of 'yes' responses is close the one in the ungrammatical condition)
+# # Not excluding for now.
+# #
+# #    amb   high  low   none
+# # 6  0.98  0.11  0.97  0.09
+# # 7  1.00  0.09  0.98  0.02
+# 
+# with(subset(data_rc, time>4), tapply(responseGrammatical, list(subject, condition), mean)) %>% round(2)
+# 
+# library(ggplot2)
+# subset(data_rc, time>4) %>% 
+#   group_by(subject, condition) %>% 
+#   dplyr::summarise(M = mean(responseGrammatical)) %>%
+#   ggplot(aes(condition, M)) + geom_bar(stat="identity") + facet_wrap(~subject)
+# 
+# , tapply(responseGrammatical, list(subject, condition), mean)) %>% round(2)
+# # excluded_participants = c(6, 7)
+# # data_rc = subset(data_rc, !(subject %in% excluded_participants) )
 
 saveRDS(data_rc, file = fname_out_rcs)
 saveRDS(data_loc, file = fname_out_locality)
