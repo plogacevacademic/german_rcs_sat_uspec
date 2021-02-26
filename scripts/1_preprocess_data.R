@@ -3,8 +3,10 @@ library(plyr)
 library(dplyr)
 library(magrittr)
 
-fname_out_locality <- "../workspace/responses_locality.rds"
-fname_out_rcs <- "../workspace/responses_rcs.rds"
+fname_interval_optim_results <- "../workspace/data/intervals_optim_results.rda"
+fname_out_locality <- "../workspace/data/responses_locality.rds"
+fname_out_rcs <- "../workspace/data/responses_rcs.rds"
+fname_out_rcs_complete <- "../workspace/data/responses_rcs_complete.rds"
 
 # Notes:
 # - Until participant 7: There were typos, and in some items conditions were mislabeled [-> That's why participant numbers start 1008.]
@@ -134,7 +136,6 @@ data_resp$full.condition <- data_resp$condition
 # NOTE:  Need a way for an interval to "disappear" without much of a penalty
 # NOTE2: Need a way to prevent too many responses in one bin.
 
-fname_interval_optim_results <- "../workspace/intervals_optim_results.rda"
 
 interval_loglik <- function(p, df, n, perform_mapping = F)
 {
@@ -277,27 +278,28 @@ data_loc <- within(data_loc, {
 })
 
 
-# 
-# # NOTE: 
-# # There are two participants who didn't rate a significant portion of the grammatical conditions acceptable 
-# # (i.e., proporiton of 'yes' responses is close the one in the ungrammatical condition)
-# # Not excluding for now.
-# #
-# #    amb   high  low   none
-# # 6  0.98  0.11  0.97  0.09
-# # 7  1.00  0.09  0.98  0.02
-# 
+
+# NOTE:
+# There are two participants who didn't rate a significant portion of the grammatical conditions acceptable
+# (i.e., proporiton of 'yes' responses is close the one in the ungrammatical condition)
+# Not excluding for now.
+#
+#    amb   high  low   none
+# 6  0.98  0.11  0.97  0.09
+# 7  1.00  0.09  0.98  0.02
+
 # with(subset(data_rc, time>4), tapply(responseGrammatical, list(subject, condition), mean)) %>% round(2)
 # 
 # library(ggplot2)
-# subset(data_rc, time>4) %>% 
-#   group_by(subject, condition) %>% 
+# subset(data_rc, time>4) %>%
+#   group_by(subject, condition) %>%
 #   dplyr::summarise(M = mean(responseGrammatical)) %>%
 #   ggplot(aes(condition, M)) + geom_bar(stat="identity") + facet_wrap(~subject)
-# 
-# , tapply(responseGrammatical, list(subject, condition), mean)) %>% round(2)
-# # excluded_participants = c(6, 7)
-# # data_rc = subset(data_rc, !(subject %in% excluded_participants) )
+
+excluded_participants_rc = c(6, 7)
+data_rc_complete = data_rc
+data_rc = subset(data_rc_complete, !(subject %in% excluded_participants_rc) )
 
 saveRDS(data_rc, file = fname_out_rcs)
+saveRDS(data_rc_complete, file = fname_out_rcs_complete)
 saveRDS(data_loc, file = fname_out_locality)

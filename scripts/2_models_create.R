@@ -10,24 +10,10 @@ stopifnot(packageVersion("brms") >= '0.10.0')
 library(doMC)
 doMC::registerDoMC(parallel::detectCores())
 
-source("./functions.R")
-source("../scripts/load_data.R")
-source("./contrasts_priors.R")
-# TODO: Make sure to exclude data points too close to each other - otherwise a high correlation coefficient will mess up the likelihood,
-#       since the approximation doesn't deal well with it.
+source("./models/functions.R")
+source("./models/contrasts_priors.R")
 
-# TODO: Do this filtering in the pre-processing script
-data %<>% group_by(subject, trial_id) %>% 
-         mutate(last_time = lag(time, default = NA),
-                delta_time = time - last_time
-         )
-
-# drop all responses with delta_time < 0.2
-data %<>% subset(delta_time > 0.2)
-# drop all responses with delta_time > 2
-data %<>% subset(delta_time < 2)
-
-
+source("./load_data.R")
 
 
 # only problematic subjects for now
