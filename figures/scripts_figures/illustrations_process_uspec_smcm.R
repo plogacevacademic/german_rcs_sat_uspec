@@ -64,5 +64,4 @@ ggplot(df, aes(trial, latency, color = attachment_success, fill = attachment_suc
 #illustrations_processes <- list(smcm = p_smcm, uspec = p_uspec)
 
 #ggsave(illustrations_processes$uspec, file = "./manualFigures/illustrationUspec.pdf", width=10, height=3.25)
-ggsave(p_smcm, file = "./manualFigures/illustrationDurationsSMCM.pdf", width=10, height=5)
-
+ggsave(p_smcm, file = path_illustration_dur_smcm, width=10, height=5)

@@ -1,5 +1,6 @@
 
-stopifnot(class(time) == "numeric")
+time <- seq(325,1100,1)
+
 
 #### DISTRIBUTIONS DEFINITIONS
 scale.all <- 100;
@@ -195,5 +196,35 @@ shifts <- paste('shift',conds,sep=".")
 smcm.rate <- round(with(smcm.rate, tapply(t, list(condition,mnum), mean))*1000)
 smcm.rate <- smcm.rate[conds, ] - c(smcm1$m.sd[shifts], smcm2$m.sd[shifts])
 stopifnot(smcm.rate[c('low','high'),'SMCM1'] == smcm.rate[c('low','high'),'SMCM2'])
+
+model_cdfs_wide <- rbind(uspec1$cdf, uspec2$cdf, smcm1$cdf, smcm2$cdf)
+model_cdfs <- model_cdfs_wide %>% tidyr::pivot_longer(low:amb, names_to="variable", values_to="value")
+model_cdfs$attachment <- model_cdfs$variable %>% dplyr::recode("amb"="ambiguous", "high"="high", "low"="low")
+
+
+legend_coord = c(.4, .4)
+ylab_label = expression(Pr(processing~complete)) #  <= t
+xlab_label = "time (ms)"
+
+prediction_cdf_uspec <-
+        model_cdfs %>% subset(model %in% c("USPEC")) %>%
+        ggplot(aes(x=time, y=value, color=attachment)) + geom_line(size=1) +
+        ylab(ylab_label) + xlab(xlab_label) + 
+        theme_bw() + theme(legend.position="top", strip.background =element_rect(fill="white")) + 
+        scale_x_continuous(breaks=NULL) + xlab("Time") #+
+        #scale_x_continuous(breaks = c(4,6,8,10)*100) 
+        # facet_wrap(~model) + 
+        #+ xkcd::theme_xkcd()
+
+prediction_cdf_smcm <-
+        model_cdfs %>% subset(model == "SMCM") %>%
+        ggplot(aes(x=time, y=value, color=attachment)) + geom_line(size=1) +
+        ylab(ylab_label) + xlab(xlab_label) +
+        theme_bw() + theme(legend.position="top") + 
+        scale_x_continuous(breaks=NULL) + xlab("Time") #+ xkcd::theme_xkcd()
+
+z = .8
+ggsave(prediction_cdf_uspec, file = path_illustration_prediction_cdf_uspec, height = z*3.5, width = z*7.26, device = cairo_pdf)
+ggsave(prediction_cdf_smcm, file = path_illustration_prediction_cdf_smcm, height = z*3.5, width = z*7.26, device = cairo_pdf)
 
 

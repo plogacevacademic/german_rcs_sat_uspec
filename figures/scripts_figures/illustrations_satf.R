@@ -61,5 +61,5 @@ p <- p + geom_point()
 #p
 
 z = .8
-ggsave(p, file = "./manualFigures/illustrationSATF.pdf", height = z*3.5, width = z*7.26, device = cairo_pdf)
+ggsave(p, file = path_illustration_satf, height = z*3.5, width = z*7.26, device = cairo_pdf)
 

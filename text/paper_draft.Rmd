@@ -138,6 +138,24 @@ library(xkcd)
 })
 ```
 
+```{r generate_figures, cache=TRUE, warning=FALSE, message=FALSE}
+path_illustration_dur_smcm <- "../figures/figures/illustrationDurationsSMCM.pdf"
+
+source("../figures/scripts_figures//illustrations_process_uspec_smcm.R")
+
+path_illustration_satf <- "../figures/figures/illustrationSATF.pdf"
+source("../figures/scripts_figures/illustrations_satf.R")
+
+path_illustration_satf <- "../figures/figures/illustrationSATFDiffs.pdf"
+source("../figures/scripts_figures/illustrations_satf_diffs.R")
+
+path_illustration_prediction_cdf_uspec <- "../figures/figures/illustrationPredictionUspec.pdf"
+path_illustration_prediction_cdf_smcm <- "../figures/figures/illustrationPredictionSMCM.pdf"
+source("../figures/scripts_figures/illustrations_process_uspec_smcm.R")
+
+```
+
+
 \newpage
 
 # Introduction
@@ -190,11 +208,6 @@ Specifically, the locus of the ambiguity advantage was at the word *moustache*, 
 
 # Models of the Ambiguity Advantage
 
-```{r illustration_uspec_smcm, results='hide'}
-suppressWarnings({
-source("../scripts_paper/illustrations_process_uspec_smcm.R")
-})
-```
 
 ## Race Models
 
@@ -219,13 +232,13 @@ Therefore, its explanation of the ambiguity advantage in the ambiguous condition
 Specifically, in ambiguous conditions, two RC attachment processes are engaged in a race, and with their completion duration assumed to vary from trial to trial under the influence of a variety of non-structural factors such as plausibility, structural priming, and others.
 The parser's actions in all three attachment conditions are illustrated in figure \ref{fig:illustrationSMCMSteps}.
 
-![(\#fig:illustrationSMCMSteps)Illustration of the logic of the SMCM. Only one attachment process can succeed in unambiguous conditions (middle and lower panel), while the fastest attachment determines the duration of](extFigures/illustrationFlowSMCM.pdf)
+![(\#fig:illustrationSMCMSteps)Illustration of the logic of the SMCM. Only one attachment process can succeed in unambiguous conditions (middle and lower panel), while the fastest attachment determines the duration of](../figures/ext_figures/illustrationFlowSMCM.pdf)
 
 According to the SMCM, when two attachment processes are engaged in a race, the RC attachment time in ambiguous conditions is unlikely to be long, since that can only happen if *both* attachment processes require a lot of time.
 In unambiguous conditions, on the other hand, only one attachment process determines the RC attachment duration and long RC attachment completion times are thus much more likely.
 The lower probability of long completion times in the ambiguous condition means that the mean RC attachment time in the ambiguous condition should be lower, and constitutes the predicted statistical facilitation, which is illustrated in figure \ref{fig:illustrationSMCMTime}.
 
-![(\#fig:illustrationSMCMTime)Illustration of the logic of the SMCM. Only one attachment process can succeed in unambiguous conditions (middle and lower panel), while the fastest attachment process .](manualFigures/illustrationDurationsSMCM.pdf)
+![(\#fig:illustrationSMCMTime)Illustration of the logic of the SMCM. Only one attachment process can succeed in unambiguous conditions (middle and lower panel), while the fastest attachment process .](../figures/figures/illustrationDurationsSMCM.pdf)
 
 \newpage
 
@@ -297,7 +310,7 @@ In unambiguous sentences, it encounters disambiguating material, and then goes o
 Since no such material is encountered in ambiguous conditions, the RC is never attached, thus saving an entire processing step.
 If task demands don't allow underspecification, the parser disambiguates RC attachment anyway, either at the end of the RC, or when the core arguments of the RC have been processed.
 
-![(\#fig:illustrationEarlyUspec)The parser's actions when task demands allow underspecification:](extFigures/illustrationFlowEarlyUspec.pdf)
+![(\#fig:illustrationEarlyUspec)The parser's actions when task demands allow underspecification:](../figures/ext_figures/illustrationFlowEarlyUspec.pdf)
 
 ```{=html}
 <!--
@@ -316,7 +329,7 @@ This variant of the underspecification account needs to explicitly stipulate tha
 If task demands don't permit underspecification, the parser disambiguates the RC attachment at this point.
 In order to explain the ambiguity advantage, one needs to stipulate that creating an underspecified representation takes less time than either attachment.
 
-![(\#fig:illustrationLateUspec)The parser's actions when task demands allow underspecification:](extFigures/illustrationFlowLateUspec.pdf)
+![(\#fig:illustrationLateUspec)The parser's actions when task demands allow underspecification:](../figures/ext_figures/illustrationFlowLateUspec.pdf)
 
 Importantly, just like the SMCM, an underspecification-based explanation of the ambiguity advantage needs to assume that RC attachment occurs with a delay, at least on some occasions.
 This assumption is required in order to explain that in both, Traxler at al.'s, as well as Swets at al.'s experiments, the ambiguity advantage has been observed at the last phrase of the relative clause.
@@ -439,13 +452,7 @@ The *rate* ($\beta$) at which accuracy increases after the intercept determines 
 Higher rates correspond to more steeply rising SATFs.
 The increase of the SATF is typically negatively accelerated, which means that it rises more slowly as it approaches the *asymptote* ($\lambda$).
 
-```{r illustrationSATFgenerate, results='hide'}
-suppressWarnings({
-source("../scripts_paper/illustrations_satf.R")
-})
-```
-
-![(\#fig:illustrationSATF)A typical speed-accuracy tradeoff function. After an initial period of chance performance, accuracy begins to increase at the intercept ($\delta$). The growth rate $\beta$ determines how quickly function approaches asymptotic performance ($\lambda$). The reciprocal of the rate $\beta^{-1}$ can be interpeted as the time required for the function to reach approximately $63\%$ of the asymptote in time.](manualFigures/illustrationSATF.pdf){width="75%"}
+![(\#fig:illustrationSATF)A typical speed-accuracy tradeoff function. After an initial period of chance performance, accuracy begins to increase at the intercept ($\delta$). The growth rate $\beta$ determines how quickly function approaches asymptotic performance ($\lambda$). The reciprocal of the rate $\beta^{-1}$ can be interpeted as the time required for the function to reach approximately $63\%$ of the asymptote in time.](../figures/figures/illustrationSATF.pdf){width="75%"}
 
 ```{=tex}
 \begin{equation}
@@ -458,7 +465,7 @@ Sentences were presented phrase by phrase, as shown in figure \ref{fig:illustrat
 Such cues were presented at predetermined SOAs relative to the presentation of the last phrase (the RC).
 This procedure allowed us to estimate the accuracy of the response at different lags, and as a result, the SATFs for all attachment conditions.
 
-![(\#fig:illustrationSATTrial)The structure of a SAT-trial.](extFigures/SATIllustration.pdf){width="25%"}
+![(\#fig:illustrationSATTrial)The structure of a SAT-trial.](../figures/ext_figures/SATIllustration.pdf){width="30%"}
 
 To answer the present question we used German sentences like (\ref{BriefEx.Exp1}), in which relative clause attachment was disambiguated by means of gender match between the relative pronoun and the two potential attachment sites.
 Because singular noun phrases including (relative) pronouns in German have unambiguous gender-marking, the attachment of a relative clause is fully determined by the gender of its relative pronoun when all possible attachment sites are singular.
@@ -502,33 +509,8 @@ to-do: Figure out why I thought so. Is this statement below really legit? Imight
 [^1] However, the rate also depends on the asymptote and so the relationship between rate and standard deviation is not easily interpretable unless asymptotes are equal. Therefore, we will focus on the predicted differences in intercepts and asymptotes.
 -->
 
-```{r illustrationSATFdiffs, results='hide', fig.height=1.5, fig.width=6, fig.cap="Hypothetical differences in speed-accuracy tradeoff functions."}
+![(\#fig:illustrationSATFdiffs)Hypothetical differences in speed-accuracy tradeoff functions.](../figures/figures/illustrationSATFDiffs.pdf){width="75%"}
 
-satf <- function(time, asymptote, invrate, intercept) {
-  ifelse( time<= intercept, 0, asymptote*(1-exp(-(time-intercept)/invrate)) )
-}
-
-time <- seq(0,4.5,by=.001)
-satf_reference <- data.frame(time, condition="a", d=satf(time, asymptote=2.8, invrate=.8, intercept=0.3))
-satf_a <- data.frame(time, condition="b", d=satf(time, asymptote=2.3, invrate=0.8, intercept=0.3))
-satf_b <- data.frame(time, condition="b", d=satf(time, asymptote=2.8, invrate=1.2, intercept=0.3))
-satf_c <- data.frame(time, condition="b", d=satf(time, asymptote=2.8, invrate=0.8, intercept=0.8))
-
-df <- rbind(rbind(satf_reference, satf_a) %>% cbind(label="asymptote difference"),
-            rbind(satf_reference, satf_b) %>% cbind(label="rate difference"), 
-            rbind(satf_reference, satf_c) %>% cbind(label="intercept difference")
-            )
-df$label %<>% factor(levels = c("asymptote difference", "rate difference", "intercept difference"))
-
-p <- ggplot(df, aes(x=time, y=d, linetype=condition))+geom_line()+facet_grid(.~ label)+ theme_bw() + scale_y_continuous(limits=c(0,3))
-
-p <- p + scale_x_continuous(breaks=NULL) + scale_y_continuous(breaks=NULL)
-p <- p + theme(axis.ticks = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), strip.background = element_rect(fill="white", color="black"))
-p <- p + xlab("time") + ylab("accuracy")
-
-print(p)
-
-```
 
 
 # Timing and Accuracy of Relative Clause (Non-)Attachment
@@ -538,38 +520,6 @@ The predictions of the two classes of theories will be discussed in turn. We wil
 We will discuss their predictions in terms of the *cumulative density functions* (CDF) of their completion time distributions, i.e., the probabilities that the stimulus has been successfully processed at any given time.
 Because of the close relationship between CDFs and SATFs, predictions about the differences in CDFs translate into predictions about differences in intercept, rate or asymtote.
 
-```{r illustration_predictions_uspec_smcm, results='hide'}
-
-time <- seq(325,1100,1)
-source("../scripts_paper/illustrations_uspec_smcm.R")
-
-model_cdfs_wide <- rbind(uspec1$cdf, uspec2$cdf, smcm1$cdf, smcm2$cdf)
-model_cdfs <- model_cdfs_wide %>% tidyr::pivot_longer(low:amb, names_to="variable", values_to="value")
-model_cdfs$attachment <- model_cdfs$variable %>% dplyr::recode("amb"="ambiguous", "high"="high", "low"="low")
- 
-
-legend_coord = c(.4, .4)
-ylab_label = expression(Pr(processing~complete)) #  <= t
-xlab_label = "time (ms)"
-
-prediction_cdf_uspec <-
-  model_cdfs %>% subset(model %in% c("USPEC")) %>%
-   ggplot(aes(x=time, y=value, color=attachment)) + geom_line(size=1) +
-          ylab(ylab_label) + xlab(xlab_label) + 
-          theme_bw() + theme(legend.position="top", strip.background =element_rect(fill="white")) + 
-          scale_x_continuous(breaks=NULL) + xlab("Time") #+
-          #scale_x_continuous(breaks = c(4,6,8,10)*100) 
-          # facet_wrap(~model) + 
-          #+ xkcd::theme_xkcd()
-
-prediction_cdf_smcm <-
-  model_cdfs %>% subset(model == "SMCM") %>%
-   ggplot(aes(x=time, y=value, color=attachment)) + geom_line(size=1) +
-          ylab(ylab_label) + xlab(xlab_label) +
-          theme_bw() + theme(legend.position="top") + 
-          scale_x_continuous(breaks=NULL) + xlab("Time") #+ xkcd::theme_xkcd()
-
-```
 
 ## Late Underspecification
 
@@ -591,13 +541,11 @@ Its predictions depend on the assumptions made about the availability of the und
 
 -->
 
-```{r predictionsUspec, results='hide', fig.height=2.5, fig.width=3, fig.cap="Probability of having successfully processed an RC attachment at a particular time as predicted by the underspecification account."}
-# library(ggpubr)
-# p <- ggarrange(illustration_cdf_uspec, illustration_cdf_smcm)
-suppressWarnings({
-print(prediction_cdf_uspec)
-})
-```
+
+
+![(\#fig:predictionsUspec)Probability of having successfully processed an RC attachment at a particular time as predicted by the underspecification account.](../figures/figures/illustrationPredictionUspec.pdf){width="75%"}
+
+
 
 -   Because the absence of a processing step the variance must be lower, and therefore the rate higher.
     (Maybe explain as "lower variance means that the x-th percentile of the distibution is further left, and this in turn means that some percentage of the asymptote is reached sooner?" )
@@ -647,11 +595,10 @@ F_{\textsc{amb}}(t) = F_{\textsc{high}}(t) + F_{\textsc{low}}(t) - F_{\textsc{hi
 (\#eq:eq1SMCM)
 \end{equation}
 ```
-```{r predictionsSMCM, results='hide', fig.height=2.5, fig.width=3, fig.cap="Probability of having successfully processed an RC attachment at a particular time as predicted by the SMCM."}
-suppressWarnings({
-print(prediction_cdf_smcm)
-})
-```
+
+![(\#fig:predictionsSMCM)Probability of having successfully processed an RC attachment at a particular time as predicted by the SMCM.](../figures/figures/illustrationPredictionSMCM.pdf){width="75%"}
+
+
 
 (and URM probably too)
 
