@@ -14,30 +14,7 @@ source("./models/functions.R")
 source("./models/contrasts_priors.R")
 
 source("./load_data.R")
-
-
-# only problematic subjects for now
-# subjects <- unique(data$subject)
-subjects <- c(2, 14,  5, 15, 16,  8, 11,  1,  3,  4,  9, 10, 12, 13, 17, 18, 19, 20, 6, 7)
-# problems with div transitions for 1, 4, 10, 11, 13, 14, 15
-
-### subject 2 ###
-# # intercept: old model
-# low-avg:     0.09     0.47
-# high-avg:   -0.25     0.31
-#
-# # intercept: new priors, new asym transformation
-# low-avg:    -0.03     0.87
-# high-avg:   -0.45     0.55
-#
-# # intercept: new priors, new asym transformation + trial id
-# low-avg:    -0.11     0.95
-# high-avg:   -0.65     0.54
-#
-# # intercept: new priors, new asym transformation
-# low-avg:    -0.03     0.87
-# high-avg:   -0.45     0.55
-
+subjects = sort(unique(data$subject))
 
 for (subj in subjects)
 {
@@ -54,78 +31,20 @@ for (subj in subjects)
              iter = 2000, chains = 4, cores = 4, seed = 1234, init_r = .1,
              file = file.path("../workspace/model_fits/models_singlesubj_uncorr", fname)
              )
-
-
-   cur_data_df_corr <- data %>% subset_data_corr(subject == subj)
-   fname <- sprintf("subj_%d", subj)
-
-   fit <- brm(sat_bf_rep(dprime = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg),
-                         crit = ~ 1  + cGenderMasc,
-                         crit_leftasym =~ 1,
-                         p_rep = ~ 1 
-                        ),
-               prior = c(priors$dprime, priors$crit, priors$p_rep
-                         ),
-               stanvars = stan_satf_functions + cur_data_df_corr$stan_last_resp + cur_data_df_corr$stan_delta_last,
-               data = cur_data_df_corr$data,
-               iter = 2000, chains = 4, cores = 4, seed = 1234, init_r = .1,
-               file = file.path("../workspace/model_fits/models_singlesubj_rep", fname)
-               )
-   
-   # cur_data_df_corr <- data %>% subset_data_corr(subject == subj)
-   # fname <- sprintf("subj_%d", subj)
-   # 
-   # fit <- brm(sat_bf_corr(dprime = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg),
-   #                        crit = ~ 1 + cGenderMasc,
-   #                        crit_leftasym = ~1,
-   #                        rho = ~1
-   #                       ),
-   #           prior = c(priors$dprime, priors$crit, priors$rho),
-   #           stanvars = stan_satf_functions + cur_data_df_corr$stan_last_resp + cur_data_df_corr$stan_delta_last,
-   #           data = cur_data_df_corr$data,
-   #           iter = 2000, chains = 4, cores = 4, seed = 1234, init_r = .1,
-   #           file = file.path("../workspace/models/models_singlesubj_corr", fname)
-   #           )
 }
 
-   # ###
-# 
-# fit_uc <- brm(sat_bf(dprime = ~ 0 + cGenderMasc * (indAmb + indHigh + indLow), 
-#                   crit = ~ 1 + cGenderMasc,
-#                   crit_leftasym =~ 1
-#                   ),
-#                   prior = c(priors$dprime[c(2,4,6),], priors$crit),
-#                   stanvars = stan_satf_functions, data = cur_data_df$data,
-#                   iter = 2000, chains = 4, cores = 4, seed = 1234, init_r = .1
-#                   )
-# 
-# fit_c <- brm(sat_bf_corr(dprime = ~ 0 + cGenderMasc * (indAmb + indHigh + indLow),
-#                        crit = ~ 1 + cGenderMasc,
-#                        crit_leftasym = ~1,
-#                        rho = ~1
-#                      ),
-#                      prior = c(priors$dprime[c(2,4,6),], priors$crit, priors$rho),
-#                      stanvars = stan_satf_functions + cur_data_df_corr$stan_last_resp + cur_data_df_corr$stan_delta_last,
-#                      data = cur_data_df_corr$data,
-#                      iter = 2000, chains = 4, cores = 4, seed = 1234, init_r = .1
-#                      #,
-#                      #control = list(adapt_delta = .99) # metric = "dense_e", ,
-#                      )
-#       
-# ###
 
 
 cur_data_df <- data %>% subset_data_nocorr(T)
 
-
 formula1 <- sat_bf(dprime = ~ 1, crit = ~ 1,
                   dprime_asymptote      = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|d1|subject), 
-                  dprime_invrate   = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|d2|subject),
-                  dprime_intercept = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|d3|subject),
+                  dprime_invrate   = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|d2|subject), # 1|d2|subject 
+                  dprime_intercept = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|d3|subject), # 1|d3|subject
                   crit_leftasym   = ~ 1 + (1|c1|subject),
-                  crit_rightasym = ~ 1 + cGenderMasc + (cGenderMasc + 1|c2|subject),
-                  crit_invrate   = ~ 1 + cGenderMasc + (cGenderMasc + 1|c3|subject),
-                  crit_intercept = ~ 1 + cGenderMasc + (cGenderMasc + 1|c4|subject)
+                  crit_rightasym = ~ 1 + cGenderMasc + (cGenderMasc + 1|c2|subject), # 1|c2|subject
+                  crit_invrate   = ~ 1 + cGenderMasc + (cGenderMasc + 1|c3|subject), # 1|c3|subject
+                  crit_intercept = ~ 1 + cGenderMasc + (cGenderMasc + 1|c4|subject)  # 1|c4|subject
                   )
 prior1 <- c(priors$dprime, priors$crit,
            priors$dprime_randef_subj, priors$crit_randef_subj,
@@ -137,8 +56,8 @@ fit1 <- brm(formula1, prior = prior1,
                 stanvars = stan_satf_functions, data = cur_data_df$data, 
                 iter = 4000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
                 #control = list(metric = "dense_e", adapt_delta = .99),
-                file = "../workspace/model_fits/fit_all_uncorr_bysubj1new",
-                sample_file = "../workspace/model_fits/fit_all_uncorr_bysubj1new"
+                file = "../workspace/model_fits/fit_all_uncorr_bysubj_1",
+                sample_file = "../workspace/model_fits/fit_all_uncorr_bysubj_1"
                 )
 
 fit1_prior <- brm(formula1, prior = prior1,
@@ -146,109 +65,109 @@ fit1_prior <- brm(formula1, prior = prior1,
             sample_prior = "only",
             iter = 2000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
             #control = list(metric = "dense_e", adapt_delta = .99),
-            file = "../workspace/model_fits/fit_all_uncorr_bysubj1_prior"
+            file = "../workspace/model_fits/fit_all_uncorr_bysubj_1_prior"
             )
 
-##################################################################################################
-##################################################################################################
-##################################################################################################
-
-
-formula1B <- sat_bf(dprime = ~ 1, crit = ~ 1,
-                   dprime_asymptote = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|d1|item), 
-                   dprime_invrate   = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|d2|item),
-                   dprime_intercept = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|d3|item),
-                   crit_leftasym   = ~ 1 + (1|c1|item),
-                   crit_rightasym = ~ 1 + cGenderMasc + (1|c2|item),
-                   crit_invrate   = ~ 1 + cGenderMasc + (1|c3|item),
-                   crit_intercept = ~ 1 + cGenderMasc + (1|c4|item)
-                   )
-prior1B <- c(priors$dprime, priors$crit,
-             #priors$dprime_randef_subj, priors$crit_randef_subj,
-             priors$dprime_randef_item, priors$crit_randef_item
-             #,
-             #set_prior("lkj(2)", class = "cor")
-             )
-
-fit1B <- brm(formula1B, prior = prior1B,
-            stanvars = stan_satf_functions, data = cur_data_df$data, 
-            iter = 2000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
-            #control = list(metric = "dense_e", adapt_delta = .99),
-            file = "../workspace/model_fits/fit_all_uncorr_byitem1",
-            sample_file = "../workspace/model_fits/fit_all_uncorr_byitem1"
-            )
-
-##################################################################################################
-##################################################################################################
-##################################################################################################
-
-
-
-formula1C <- sat_bf(dprime = ~ 1, crit = ~ 1,
-                    dprime_asymptote = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|ds1|subject) + ( 1|di1|item), 
-                    dprime_invrate   = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|ds2|subject) + ( 1|di2|item),
-                    dprime_intercept = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|ds3|subject) + ( 1|di3|item),
-                    crit_leftasym   = ~ 1 + (1|cs1|subject) + (1|ci1|item),
-                    crit_rightasym = ~ 1 + cGenderMasc + (1|cs2|subject) + (1|ci2|item),
-                    crit_invrate   = ~ 1 + cGenderMasc + (1|cs3|subject) + (1|ci3|item),
-                    crit_intercept = ~ 1 + cGenderMasc + (1|cs4|subject) + (1|ci4|item)
-                    )
-prior1C <- c(priors$dprime, priors$crit,
-             priors$dprime_randef_subj, priors$crit_randef_subj,
-             priors$dprime_randef_item, priors$crit_randef_item
-             #set_prior("lkj(2)", class = "cor")
-            )
-
-fit1C <- brm(formula1C, prior = prior1C,
-             stanvars = stan_satf_functions, data = cur_data_df$data, 
-             iter = 2000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
-             #control = list(metric = "dense_e", adapt_delta = .99),
-             file = "../workspace/model_fits/fit_all_uncorr_byitem_bysubj1",
-             sample_file = "../workspace/model_fits/fit_all_uncorr_byitem_bysubj1"
-            )
-
-##################################################################################################
-##################################################################################################
-##################################################################################################
-
-
-formula2A <- sat_bf(dprime = ~ 1, crit = ~ 1,
-                    dprime_asymptote = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) +
-                                            ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|ds1|subject) +
-                                            (1|di1|item), 
-                    dprime_invrate   = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) +
-                                            ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|ds2|subject) +
-                                            (1|di2|item),
-                    dprime_intercept = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) +
-                                            ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|ds3|subject) +
-                                            (1|di3|item),
-                    crit_leftasym  = ~ 1 + (1|cs1|subject),
-                    crit_rightasym = ~ 1 + cGenderMasc + (cGenderMasc + 1|cs2|subject),
-                    crit_invrate   = ~ 1 + cGenderMasc + (cGenderMasc + 1|cs3|subject),
-                    crit_intercept = ~ 1 + cGenderMasc + (cGenderMasc + 1|cs4|subject)
-                  )
-
-prior2A <- c(priors$dprime, priors$crit,
-            priors$dprime_randef_subj, priors$crit_randef_subj,
-            priors$dprime_randef_item, #priors$crit_randef_item,
-            set_prior("lkj(2)", class = "cor")
-            )
-
-# fit2A_prior <- brm(formula2A, prior = prior2A,
-#                   stanvars = stan_satf_functions, data = cur_data_df$data[1:2,], 
-#                   sample_prior = "only",
-#                   iter = 2000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
-#                   #control = list(metric = "dense_e", adapt_delta = .99),
-#                   file = "../workspace/models/fit_all_uncorr_bysubj2A_prior"
+# ##################################################################################################
+# ##################################################################################################
+# ##################################################################################################
+# 
+# 
+# formula1B <- sat_bf(dprime = ~ 1, crit = ~ 1,
+#                    dprime_asymptote = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|d1|item), 
+#                    dprime_invrate   = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|d2|item),
+#                    dprime_intercept = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|d3|item),
+#                    crit_leftasym   = ~ 1 + (1|c1|item),
+#                    crit_rightasym = ~ 1 + cGenderMasc + (1|c2|item),
+#                    crit_invrate   = ~ 1 + cGenderMasc + (1|c3|item),
+#                    crit_intercept = ~ 1 + cGenderMasc + (1|c4|item)
+#                    )
+# prior1B <- c(priors$dprime, priors$crit,
+#              #priors$dprime_randef_subj, priors$crit_randef_subj,
+#              priors$dprime_randef_item, priors$crit_randef_item
+#              #,
+#              #set_prior("lkj(2)", class = "cor")
+#              )
+# 
+# fit1B <- brm(formula1B, prior = prior1B,
+#             stanvars = stan_satf_functions, data = cur_data_df$data, 
+#             iter = 2000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
+#             #control = list(metric = "dense_e", adapt_delta = .99),
+#             file = "../workspace/model_fits/fit_all_uncorr_byitem1",
+#             sample_file = "../workspace/model_fits/fit_all_uncorr_byitem1"
+#             )
+# 
+# ##################################################################################################
+# ##################################################################################################
+# ##################################################################################################
+# 
+# 
+# 
+# formula1C <- sat_bf(dprime = ~ 1, crit = ~ 1,
+#                     dprime_asymptote = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|ds1|subject) + ( 1|di1|item), 
+#                     dprime_invrate   = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|ds2|subject) + ( 1|di2|item),
+#                     dprime_intercept = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) + ( 1|ds3|subject) + ( 1|di3|item),
+#                     crit_leftasym   = ~ 1 + (1|cs1|subject) + (1|ci1|item),
+#                     crit_rightasym = ~ 1 + cGenderMasc + (1|cs2|subject) + (1|ci2|item),
+#                     crit_invrate   = ~ 1 + cGenderMasc + (1|cs3|subject) + (1|ci3|item),
+#                     crit_intercept = ~ 1 + cGenderMasc + (1|cs4|subject) + (1|ci4|item)
+#                     )
+# prior1C <- c(priors$dprime, priors$crit,
+#              priors$dprime_randef_subj, priors$crit_randef_subj,
+#              priors$dprime_randef_item, priors$crit_randef_item
+#              #set_prior("lkj(2)", class = "cor")
+#             )
+# 
+# fit1C <- brm(formula1C, prior = prior1C,
+#              stanvars = stan_satf_functions, data = cur_data_df$data, 
+#              iter = 2000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
+#              #control = list(metric = "dense_e", adapt_delta = .99),
+#              file = "../workspace/model_fits/fit_all_uncorr_byitem_bysubj1",
+#              sample_file = "../workspace/model_fits/fit_all_uncorr_byitem_bysubj1"
+#             )
+# 
+# ##################################################################################################
+# ##################################################################################################
+# ##################################################################################################
+# 
+# 
+# formula2A <- sat_bf(dprime = ~ 1, crit = ~ 1,
+#                     dprime_asymptote = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) +
+#                                             ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|ds1|subject) +
+#                                             (1|di1|item), 
+#                     dprime_invrate   = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) +
+#                                             ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|ds2|subject) +
+#                                             (1|di2|item),
+#                     dprime_intercept = ~ 1 + cGenderMasc * (cLowVsAvg + cHighVsAvg) +
+#                                             ( cGenderMasc * (cLowVsAvg + cHighVsAvg) + 1|ds3|subject) +
+#                                             (1|di3|item),
+#                     crit_leftasym  = ~ 1 + (1|cs1|subject),
+#                     crit_rightasym = ~ 1 + cGenderMasc + (cGenderMasc + 1|cs2|subject),
+#                     crit_invrate   = ~ 1 + cGenderMasc + (cGenderMasc + 1|cs3|subject),
+#                     crit_intercept = ~ 1 + cGenderMasc + (cGenderMasc + 1|cs4|subject)
 #                   )
-
-fit2A <- brm(formula2A, prior = prior2A,
-            stanvars = stan_satf_functions, data = cur_data_df$data, 
-            iter = 2000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
-            #control = list(adapt_delta = .95, max_treedepth = 20), # metric = "dense_e", 
-            file = "../workspace/models/fit_all_uncorr_bysubj2A",
-            sample_file = "../workspace/models/fit_all_uncorr_bysubj2A"
-            )
+# 
+# prior2A <- c(priors$dprime, priors$crit,
+#             priors$dprime_randef_subj, priors$crit_randef_subj,
+#             priors$dprime_randef_item, #priors$crit_randef_item,
+#             set_prior("lkj(2)", class = "cor")
+#             )
+# 
+# # fit2A_prior <- brm(formula2A, prior = prior2A,
+# #                   stanvars = stan_satf_functions, data = cur_data_df$data[1:2,], 
+# #                   sample_prior = "only",
+# #                   iter = 2000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
+# #                   #control = list(metric = "dense_e", adapt_delta = .99),
+# #                   file = "../workspace/models/fit_all_uncorr_bysubj2A_prior"
+# #                   )
+# 
+# fit2A <- brm(formula2A, prior = prior2A,
+#             stanvars = stan_satf_functions, data = cur_data_df$data, 
+#             iter = 2000, warmup = 1000, chains = 4, cores = 4, seed = 1234, init_r = .1,
+#             #control = list(adapt_delta = .95, max_treedepth = 20), # metric = "dense_e", 
+#             file = "../workspace/models/fit_all_uncorr_bysubj2A",
+#             sample_file = "../workspace/models/fit_all_uncorr_bysubj2A"
+#             )
 
 # ##################################################################################################
 # ##################################################################################################

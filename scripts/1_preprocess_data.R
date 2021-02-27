@@ -277,29 +277,5 @@ data_loc <- within(data_loc, {
   responseGrammatical %<>% dplyr::recode("Y"=1, "N"=0) %>% as.integer
 })
 
-
-
-# NOTE:
-# There are two participants who didn't rate a significant portion of the grammatical conditions acceptable
-# (i.e., proporiton of 'yes' responses is close the one in the ungrammatical condition)
-# Not excluding for now.
-#
-#    amb   high  low   none
-# 6  0.98  0.11  0.97  0.09
-# 7  1.00  0.09  0.98  0.02
-
-# with(subset(data_rc, time>4), tapply(responseGrammatical, list(subject, condition), mean)) %>% round(2)
-# 
-# library(ggplot2)
-# subset(data_rc, time>4) %>%
-#   group_by(subject, condition) %>%
-#   dplyr::summarise(M = mean(responseGrammatical)) %>%
-#   ggplot(aes(condition, M)) + geom_bar(stat="identity") + facet_wrap(~subject)
-
-excluded_participants_rc = c(6, 7)
-data_rc_complete = data_rc
-data_rc = subset(data_rc_complete, !(subject %in% excluded_participants_rc) )
-
 saveRDS(data_rc, file = fname_out_rcs)
-saveRDS(data_rc_complete, file = fname_out_rcs_complete)
 saveRDS(data_loc, file = fname_out_locality)
