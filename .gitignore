@@ -1,1 +1,7 @@
 workspace/*
+text/paper_draft.log
+text/paper_draft.md
+text/paper_draft.pdf
+text/paper_draft.tex
+text/paper_draft_cache/
+text/paper_draft_files/
