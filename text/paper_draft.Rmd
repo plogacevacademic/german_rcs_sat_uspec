@@ -127,14 +127,18 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed,
 
 ```{r init_packages, warning=FALSE, message=FALSE}
 suppressPackageStartupMessages({
-#library(reshape)
-library(plyr)
-library(dplyr)
-library(magrittr)
-library(tidyr)
-#library(satf)
-library(ggplot2)
-library(xkcd)
+  # library(satf) 
+  # library(reshape)
+  library(plyr)
+  library(dplyr)
+  library(magrittr)
+  library(tidyr)
+  #library(satf)
+  library(ggplot2)
+  library(xkcd)
+  library(gridExtra)
+  library(rstan)
+  library(brms)
 })
 ```
 
@@ -719,6 +723,383 @@ In the following, 95% credible intervals and 80% credible intervals will be used
 They mean this .....
 (cite).
 Another metric that will be used is the posterior probability any parameter $\theta$ being larger or smaller than a particular value, $P(\theta > 0)$, which means this ....
+
+## Results
+
+<!-- Start using \beta^-1 instead of \beta. -->
+
+<!-- 
+to-do: Subject 5 seems to have rather extreme estimates of intercept differences in the same direction of the group differences found in the hierarchical model. To check whether the results are largely driven by subject 5's data, we should probably compre this fit with a model without subject 5.
+-->
+
+---
+Figure 6. Average d’ at different lags after the presentation of the two-word relative clause (circles). Model predictions based on fixed effects maximum a-posteriori (MAP) estimates (solid lines), along with a spaghetti plot illustrating the uncertainty in the model predictions based on 250 random samples from the model (semi-transparent lines).
+--- 
+
+--- 
+Figure 7. Credible intervals for the coefficients of a non-linear hierarchical Bayesian model, by speed-accuracy trade-off function parameter (x-intercept, 1/rate, asymptote). Thin lines represent 95% CrIs and thick lines represent 80% CrIs. The model was fitted with transformed parameters, but estimates are presented in more easily interpretable units for convenience.
+--- 
+
+```{DataAnalysis.Summarize, echo=FALSE, results='hide', eval=TRUE}
+
+# compute 'yes' counts per time window
+data_rc_nyes <- data_rc %>% subset(maxlik_interval) %>%
+                            group_by(condition, interval) %>% 
+                            summarize_n_responses()
+
+data_rc_dprime <- summarize_dprime(data_nyes = data_rc_nyes, by_subject = F)
+
+# exclude interval 14, because: 
+# (i) it is based on too few data points (~2K as opposed to ~5K in the previous intervals), and 
+# (ii) it looks 'off' - it suggests lower d-prime at this last interval only, presumably, because incorrect responses are overrepresented, in this interval only
+# to-do: consider removing these data points from the analysis too, so long as within-trial correlation isn't accounted for
+data_rc_dprime %<>% subset(interval != 14)
+
+# compute d' per time window by participant
+data_rc_bysubj_dprime <- data_rc %>% subset(maxlik_interval) %>%
+                        group_by(subject, condition, interval) %>% 
+                        summarize_n_responses() %>%
+                        summarize_dprime(data_nyes = ., by_subject = T)
+
+```
+
+```{DataAnalysis.PrepareModels, results='hide', echo=FALSE, eval=T, echo=FALSE}
+
+### models fitted in "../models/models_create.R"
+fit_brms <- readRDS("../workspace/model_fits0/m_uncorr_bysubj1.rds")
+
+names_fixef <- fixef(fit_brms) %>% rownames %>% paste0("b_", .)
+fit_samples <- brms::posterior_samples(fit_brms) #, par = names_fixef)
+
+contr <- extract_constraints(data_rc)
+samp_asym <- samples_extract_asymptotes(contrasts = contr, samples = fit_samples)
+samp_invrate <- samples_extract_invrates(contrasts = contr, samples = fit_samples)
+samp_intercept <- samples_extract_intercept(contrasts = contr, samples = fit_samples)
+```
+
+```{DataAnalysis.PlotFit, eval=T, echo=FALSE, results='hide', fig.width=10}
+
+fn_map <- function(condition) {
+        function(time) { dprime_fn(time, 0, 
+                                   asymptote_unconstrained = bayestestR::map_estimate(samp_asym$unconstrained[[condition]]), 
+                                   invrate_unconstrained = bayestestR::map_estimate(samp_invrate$unconstrained[[condition]]), 
+                                   intercept_unconstrained = bayestestR::map_estimate(samp_intercept$unconstrained[[condition]]))
+                      }
+}
+
+fn_index <- function(condition, idx) {
+        samp_asymptote_unconstrained = samp_asym$unconstrained[idx, condition] 
+        samp_invrate_unconstrained = samp_invrate$unconstrained[idx, condition]
+        samp_intercept_unconstrained = samp_intercept$unconstrained[idx, condition]
+        fn <- function(time) { 
+            dprime_fn(time, 0, 
+                      asymptote_unconstrained = samp_asymptote_unconstrained, 
+                      invrate_unconstrained = samp_invrate_unconstrained, 
+                      intercept_unconstrained = samp_intercept_unconstrained)
+        }
+        fn(0)
+        fn
+}
+
+
+fname_avg_dprime_plot <- "./manualFigures/averageDprimeAndPredictions.pdf"
+
+if (!file.exists(fname_avg_dprime_plot))
+{
+
+brms::expose_functions(fit_brms, vectorize = T)
+
+# plot of average of by-participant d-primes
+p <- data_rc_bysubj_dprime %>% subset(!is.na(interval)) %>% #subset(subject == 5) %>%
+        subset(interval != 14) %>% # much lower N at interval 14, which makes it look like a (spurious) accuracy drop
+        group_by(interval, condition) %>% 
+        dplyr::summarise(avg_time = mean(avgtime, na.rm = T), 
+                         avg_dprime = mean(dprime, na.rm = T),
+                         ndprime = sum(ndprime),
+                         n_subjects = length(unique(subject))) %>%
+        ggplot(aes(avg_time, avg_dprime, color = condition)) + geom_point() + geom_point(shape=1, color="black")+ theme_bw() #+ facet_wrap(~gender)
+
+set.seed(12345)
+n_samples_fn <- 250
+idx_fn <- sample(1:nrow(samp_asym$unconstrained), n_samples_fn)
+
+for (idx in idx_fn) {
+  p <- p + stat_function(fun = fn_index("amb", idx), n = 1000, color = "red", alpha = .05)
+  p <- p + stat_function(fun = fn_index("high", idx), n = 1000, color = "green", alpha = .05)
+  p <- p + stat_function(fun = fn_index("low", idx), n = 1000, color = "blue", alpha = .05)
+}
+
+p <- p + stat_function(fun = fn_map("amb"), n = 1000, color = "red") +
+         stat_function(fun = fn_map("high"), n = 1000, color = "green") +
+         stat_function(fun = fn_map("low"), n = 1000, color = "blue")
+
+p <- p + xlab("Time since onset of the RC (in seconds)") + ylab("Sensitivity (d')")
+
+ggsave(filename = fname_avg_dprime_plot, plot=p, width=6, height=3)
+
+}
+```
+
+```{DataAnalysisPlotCoefs1, results='hide', echo=FALSE, eval=T, echo=FALSE, fig.width=10, fig.height=3.5, fig.cap="Credible intervals for the coefficients of a non-linear hierarchical Bayesian model, by speed-accuracy trade-off function parameter (x-intercept, 1/rate, asymptote). Thin lines represent 95\\% CrIs and thick lines represent 80\\% CrIs. The model was fitted with transformed parameters, but estimates are presented in more easily interpretable units for convenience.", dev="cairo_pdf"}
+target_contr_names <- c("masc-fem"="masc_m_fem", "amb-high"="amb_m_high", "amb-low"="amb_m_low", 
+                        "masc * (amb-high)"="masc_by_amb_m_high", "masc * (amb-low)"="masc_by_amb_m_low")
+
+intercepts <- data.frame(idx = 1:nrow(samp_asym$constrained),
+                        asymptote = samp_asym$constrained$intercept, 
+                        invrate = samp_invrate$constrained$intercept, 
+                        intercept = samp_intercept$constrained$intercept)
+intercepts %<>% tidyr::pivot_longer(c("asymptote", "invrate", "intercept"), names_to = "name", values_to = "val")
+intercepts %<>% group_by(name) %>% 
+                summarize(lower95 = bayestestR::hdi(val, ci = .95)$CI_low,
+                          upper95 = bayestestR::hdi(val, ci = .95)$CI_high,
+                          lower80 = bayestestR::hdi(val, ci = .8)$CI_low,
+                          upper80 = bayestestR::hdi(val, ci = .8)$CI_high,
+                          mid = bayestestR::map_estimate(val)[1] )
+intercepts <- intercepts %T>% {.$param_type <- paste0(rep(" ", 29), collapse="")}
+intercepts %<>% as.data.frame %T>% {rownames(.) <- .$name}
+
+
+slopes <- samples_summary(fit_brms = fit_brms, contr = contr, target_contr_names = target_contr_names) %T>% 
+                {.$param %<>% factor(c("intercept","invrate","asymptote")) }
+slopes %<>% as.data.frame %T>% {rownames(.) <- paste0(.$param, "__", .$name) }
+
+slopes2 <- samples_summary(fit_brms = fit_brms, contr = contr, target_contr_names = target_contr_names) %T>% 
+          {.$param %<>% factor(c("intercept","invrate","asymptote")) }
+
+
+plots <- list()
+plots$intercept <- intercepts %>% subset(name == "intercept") %>% ggplot(aes(mid, param_type)) + xlab("seconds") + 
+                                  scale_x_continuous(limits = c(.3,.5), breaks=c(.3, .4, .5)) + 
+                                  facet_wrap(~"average x-intercept")
+plots$invrate <- intercepts %>% subset(name == "invrate") %>% ggplot(aes(mid, param_type)) + xlab("seconds") + 
+                                  scale_x_continuous(limits=c(.9, 1.5), breaks=c(1, 1.25, 1.5)) + 
+                                  facet_wrap(~"average 1/rate")
+plots$asymptote <- intercepts %>% subset(name == "asymptote") %>% ggplot(aes(mid, param_type)) + xlab("d' units") + 
+                                  scale_x_continuous(limits=c(2,3), breaks=c(2, 2.5, 3)) + 
+                                  facet_wrap(~"average asymptote")
+
+plots$delta_intercept2 <- slopes2 %>% subset(param == "intercept") %>% ggplot(aes(mid, name)) + xlab("seconds") +
+                                      scale_x_continuous(limits = c(-.2, .2)) + 
+                                      facet_wrap(~"\u394 x-intercept")
+plots$delta_invrate2 <- slopes2 %>% subset(param == "invrate") %>% ggplot(aes(mid, name)) + xlab("seconds") + 
+                                      scale_x_continuous(limits = c(-.6, .6)) + 
+                                      facet_wrap(~"\u394 1/rate")
+plots$delta_asymptote2 <- slopes2 %>% subset(param == "asymptote") %>% ggplot(aes(mid, name)) + xlab("d' units") + 
+                                      scale_x_continuous(limits = c(-1, 2.5)) + 
+                                      facet_wrap(~"\u394 asymptote" )
+
+for (i in 1:length(plots)) {
+  plots[[i]] <- plots[[i]] + geom_point(size=3) + 
+                geom_errorbarh(aes(xmin=lower95, xmax=upper95), height=0.05) + 
+                geom_errorbarh(aes(xmin=lower80, xmax=upper80), height=0.00, size=2) + 
+                theme_bw() + ylab("")
+  if (i >= 4) {
+    plots[[i]] <- plots[[i]] + geom_vline(xintercept = 0, color = "red") # , linetype = "dotted"
+  }
+}
+
+suppressWarnings({
+p1 <- cowplot::plot_grid(plotlist = plots, nrow = 2, #rel_widths = c(1, 1, 1, 1, 1, 1), 
+                         rel_heights = c(1,2.5))
+})
+
+print(p1)
+
+
+format_CrI <- function(vals, ci_width=95, digits=2) {
+  fmt <- paste0("%.0", digits, "f") 
+  fmt_expr <- paste0("[",fmt, "; ", fmt, "]")
+  sprintf(fmt_expr, vals[paste0("lower",ci_width)], vals[paste0("upper",ci_width)])
+}
+
+format_post_prob <- function(vals, p_below = T, digits = 3)
+{
+    if(p_below) {
+      posterior_prob <- (vals[["p_below_zero"]])
+      relation_theta_val <- "<"
+    } else {
+      posterior_prob <- (1-vals[["p_below_zero"]])
+      relation_theta_val <- ">"
+    }
+    
+    min_value <- 1/10^digits
+    if (posterior_prob < min_value) { 
+      relation_postprob_val <- "<" 
+      posterior_prob <- min_value
+    }
+    else if (posterior_prob > 1-min_value) { 
+      relation_postprob_val <- ">" 
+      posterior_prob <- 1-min_value
+    }
+    else {
+      relation_postprob_val <- "="
+    }
+
+    fmt_expr <- paste0("P(\\theta ", relation_theta_val, " 0) ", relation_postprob_val, " %.0", digits, "f")
+    p_direction <- sprintf(fmt_expr, posterior_prob)
+    
+    p_direction
+}
+
+format_CrI_and_post_prob <- function(vals, ci_width=95, ci_digits=2, pp_below=T, pp_digits=3) {
+  CrI <- format_CrI(vals, ci_width=ci_width, digits=ci_digits)
+  pp <- format_post_prob(vals, p_below=pp_below, digits = pp_digits)
+  sprintf("$CrI = %s$, $%s$", CrI, pp)
+}
+```
+
+```{DataAnalysisPlotCoefs3, results='hide', echo=FALSE, eval=F, echo=FALSE, fig.width=10, fig.height=13, fig.cap="XXX"}
+fnames_singlesubj_uncorr <- dir("../workspace/model_fits0/models_singlesubj_uncorr", full.names = T)
+
+contr <- extract_constraints(data_rc)
+
+summary_params_bysubj <-
+plyr::ldply(fnames_singlesubj_uncorr, function(fname) {
+  fit_brms <- readRDS(fname)
+  df <- samples_summary(fit_brms = fit_brms, contr = contr, target_contr_names = target_contr_names)
+  df$subj <- basename(fname) %>% gsub(".rds", "", .)
+  df
+})
+summary_params_bysubj$subj %<>% gsub("subj_", "", .)
+subjects <- summary_params_bysubj$subj %>% sort() %>% unique()
+summary_params_bysubj$subj %<>% factor(., levels = rev(sort(as.integer(subjects))))
+summary_params_bysubj$name %<>% factor(., levels = (names(target_contr_names)))
+
+if (F) {
+p_single <-
+summary_params_bysubj %>% 
+      ggplot(aes(mid, subj)) +
+          geom_point() + 
+          geom_errorbarh(aes(xmin=lower95, xmax=upper95), height=0.0) + 
+          geom_errorbarh(aes(xmin=lower80, xmax=upper80), height=0.0, size=1) + 
+          facet_grid(name~param, scale = "free_x", switch = "y") + xlab("") + ylab("") + 
+          geom_vline(xintercept = 0, color = "red", alpha = 1) + # linetype = "dotted", 
+          theme_bw()
+
+print(p_single)
+}
+
+
+if (F)
+{
+
+  summary_params_bysubj %>% subset(subj == 5 & param == "asymptote")
+
+  
+  # XXX
+  a <- summary_params_bysubj %>% subset(name %in% c("amb-low") & param == "intercept" & subj != 5)
+  prod(a$p_below_zero)^(1/20)
+  
+  
+  x <- summary_params_bysubj %>% dplyr::select(subj, param, name, mid, lower95, upper95) %>% subset(name %in% c("amb-high", "amb-low"))
+  z <- x %>% pivot_wider(id_cols = c("subj", "name"), names_from = c("param"), values_from = c("mid", "lower95", "upper95"))
+
+  ggplot(z, aes(mid_intercept, mid_asymptote)) + geom_point() + geom_errorbar(aes(ymin=lower95_asymptote, ymax=upper95_asymptote), alpha=.3) + geom_errorbarh(aes(xmin=lower95_intercept, xmax=upper95_intercept), alpha=.3) + facet_wrap(~name) + geom_vline(xintercept = 0, color="red") + geom_hline(yintercept = 0, color="red")
+  
+}
+
+
+###
+if (T) {
+
+subjects <- unique(fit_brms$data$subject) %>% as.character() %>% as.integer() %>% sort()
+
+summary_params_bysubj_hierarchical <-
+plyr::ldply(subjects, function(subj) {
+  df <- samples_summary(fit_brms = fit_brms, contr = contr, target_contr_names = target_contr_names, subject = subj)
+  df$subj <- subj
+  df
+})
+
+summary_params_bysubj$model_type <- "single-subject"
+summary_params_bysubj_hierarchical$model_type <- "hierarchical"
+summary_params_bysubj$subj %<>% as.character() %>% as.integer()
+summary_params_bysubj_all <- bind_rows(summary_params_bysubj, summary_params_bysubj_hierarchical)
+
+subj_labels <- paste(rep(subjects, each=2), c("[S]", "[H]"))
+summary_params_bysubj_all$subj_label <- with(summary_params_bysubj_all, paste(subj, ifelse(model_type == "separate", "[S]", "[H]") ))
+summary_params_bysubj_all$subj_label %<>% factor(rev(subj_labels))
+
+summary_params_bysubj_all$subj %<>% as.factor()
+
+p <-
+summary_params_bysubj_all %>% #subset(name != "amb") %>%
+      ggplot(aes(mid, subj, color = model_type), position = position_dodge(width = .1) ) +
+          geom_point() + 
+          geom_errorbarh(aes(xmin=lower95, xmax=upper95), height=0.5) + 
+          #geom_errorbarh(aes(xmin=lower80, xmax=upper80), height=0.0, size=1) + 
+          facet_grid(name~param, scale = "free_x", switch = "y") + xlab("") + ylab("") + 
+          geom_vline(xintercept = 0, color = "grey", alpha = 1) + # linetype = "dotted", 
+          theme_bw() + theme(legend.position = "top")
+
+#scale_colour_discrete(position = "top")
+ 
+print(p )
+#ggsave(p, file = "by_subj_estimates.pdf", height=16, width=15)
+}
+
+```
+
+
+Figure \ref{fig:AverageGroupFit} shows the average d0 by attachment condition at different points in time along with the model predictions. The plot shows that at later lags, ambiguous conditions are responded to more accurately than both unambiguous conditions, and that low attachment conditions are responded to somewhat more accurately than their high attachment counterparts.
+
+Figure \ref{fig:DataAnalysisPlotCoefs1} shows the 95% and 80% credible intervals of the non-linear hierarchical Bayesian model of the speed-accuracy tradeoff functions according to equation \ref{eq:satf.repeated}.
+Its upper panels shows that the average x-intercept 
+($\delta$) was in the range `r format_CrI(intercepts['intercept',])\,sec`, the average reciprocal rate 
+($\beta$) was in the range `r format_CrI(intercepts['invrate',])\,sec`, while the average asymptote 
+($\lambda$) was in the range `r format_CrI(intercepts['asymptote',])`.
+The lower panels of figure \ref{fig:DataAnalysisPlotCoefs1} show the estimates of the effects of the experimental manipulation on the parameters of the speed-accuracy tradeoff function. The results show a smaller x-intercept in the ambiguous attachment condition than either the low attachment condition 
+(`r format_CrI_and_post_prob(slopes['intercept__amb-low',])`) or the high attachment condition 
+(`r format_CrI_and_post_prob(slopes['intercept__amb-high',])`).
+
+In addition to a lower x-intercept, ambiguous RC attachment appears to be associated with higher asymptotic accuracy than either low attachment (`r format_CrI_and_post_prob(slopes['asymptote__amb-low',])`) or high attachment (`r format_CrI_and_post_prob(slopes['asymptote__amb-high',])`). 
+
+Attachment did not appear to have an unambiguous effect on the $\beta$ parameter (1/rate), although processing appears to have been somewhat slower in the ambiguous conditions relative to their unambiguous counterparts 
+(low attachment: `r format_CrI_and_post_prob(slopes['invrate__amb-low',])`; 
+high attachment: `r format_CrI_and_post_prob(slopes['invrate__amb-high',])`).
+
+Moreover, the analysis showed a main effect of relative pronoun gender indicating that masculine relative pronoun conditions were associated with higher x-intercepts (`r format_CrI_and_post_prob(slopes['intercept__masc-fem',])`), as well as somewhat lower asymptotic accuracy (`r format_CrI_and_post_prob(slopes['asymptote__masc-fem',])`).
+
+The only noteworthy interaction between gender and attachment affected asymptotic accuracy, indicating larger differences between ambiguous and high attachment conditions (`r format_CrI_and_post_prob(slopes['asymptote__masc * (amb-high)',])`), as well as between ambiguous and low attachment conditions (`r format_CrI_and_post_prob(slopes['asymptote__masc * (amb-low)',])`).
+<!-- to-do: % to-do: Make sure to discuss this finding in the discussion section. ... taken together with the decrease in average accuracy in masculine conditions, this really means that unambiguous conditions were processed less reliably when the relative pronoun was masculine, which is probably because of the ambiguity between FEM-DAT and MASC-NOM that 'der' has. -->
+
+
+## Discussion
+
+The main findings in the analysis of the experiment were that the speed-accuracy tradeoff function of the ambiguous relative clause attachment condition are characterized by (1) higher asymptotic accuracy and (2) a lower x-intercept than either of the unambiguous conditions.
+The finding of higher asymptotic accuracy in the ambiguous attachment conditions (95% HPDIs: `r round(slopes['asymptote__amb-high','lower95'],1)` to `r round(slopes['asymptote__amb-high','upper95'],1)` $d'~units$  higher compared to high attachment; `r round(slopes['asymptote__amb-low','lower95'],1)` to `r round(slopes['asymptote__amb-low','upper95'],1)` $d'~units$ higher compared to low attachment) is incompatible with the non-fallible versions of the URM and Underspecification as they predict equal error rates in all attachment conditions. This is because, if all acceptability judgment errors were caused by factors unrelated to parsing, all experimental conditions should be affected to the same extent, and so asymptotes across experimental conditions should be equal. Thus, the finding of higher asymptotes in the ambiguous condition is compatible only with the fallible models F-URM and F-Underspecification.
+The finding of lower x-intercepts in the ambiguous attachment conditions (95% HPDIs: `r -1*round(slopes['intercept__amb-high','upper95']*1000)` ms to `r -1*round(slopes['intercept__amb-high','lower95']*1000)` ms lower compared to high attachment; `r -1*round(slopes['intercept__amb-low','upper95']*1000)` ms to `r -1*round(slopes['intercept__amb-low','lower95']*1000)` ms lower compared to low attachment) is incompatible with either of the URM versions. This is because the URM predicts that the minimum time required to complete an RC attachment in the ambiguous condition should equal the shortest of the minimum RC attachment times in the unambiguous conditions. A lower x-intercept in the ambiguous condition, in contrast, reflects lower minimum RC attachment times in the ambiguous condition than in either of the unambiguous conditions, and is likely to reflect the omission of a processing step in the processing of sentences with ambiguous RC attachment.
+These findings provide strong evidence for fallible models of RC attachment, and tentative evidence against race-based models. Taken together, the results support the F-Underspecification model of RC attachment in ambiguous sentences.
+
+<!--
+
+% todo: is tentative really the right classification here?
+These findings provide \textit{strong} evidence for fallible models of RC attachment, and \textit{tentative} evidence against race-based models. Taken together, the results support the F-Underspecification model of RC attachment in ambiguous sentences. 
+
+% Because the relationship between rates on a percent-scale and on $d'$-scale is not straightforwardly interpretable in the presence of asymptote differences, and because the confidence intervals for $1/rate$ estimates were fairly wide, we will abstain from interpreting this portion of the results.
+
+% TODO: General conclusion - parsing is failible - specific parsing processes are failible (maybe connect to the new Ferrira paper, the Bader&Meng paper, and the old Ferreira paper )
+% Discuss relation to the Dillon paper, but also to mine.
+
+% TODO: Discuss the gender effects. It seems that 'der' conditions are actually processed more accurately than 'die' condiitons, but only in ambiguous and low attachment conditions??
+
+-->
+
+# General Discussion
+
+We have discussed two existing explanations of the ambiguity advantage: the Unrestricted Race Model proposed by @vanGompelEtAl:2000 and the underspecification model proposed by @SwetsEtAl:2008. We showed that while all candidate models make the same qualitative predictions concerning mean reading times, their predictions differ with respect to completion time distributions, and therefore with respect to SATFs. We then discussed the implications of a fallible memory system on the SATF predictions of both theories. With regard to parsing fallibility, we instantiated two versions each of the two models, yielding four candidate models. We then presented data from an SAT-experiment, which provided evidence in favor lower asymptotic accuracy and against lower intercepts in the unambiguous conditions. By modeling the effect of potential attention-related confounds we were able to rule out alternative explanations of our finding.
+The finding regarding asymptotes suggests that parsing, just like memory retrieval is subject to failure. Because ambiguous sentences are compatible with two different structures, parsing is significantly less likely to ultimately fail in such sentences. Thus our results allowed us to confidently rule out both models that assume no attachment failure, i.e., URM and Underspecification, because they were incompatible with our finding that asymptotes in the ambiguous condition were reliably higher than in unambiguous conditions. Under the assumption that parsing is fallible, the F-URM actually predicts lower failure rates in ambiguous conditions, because this follows from its fundamental assumptions. The F-Underspecification model is also compatible with this finding, but it does not follow from its core assumptions, unlike in the F-URM.
+Our finding regarding intercepts speaks against the F-Underspecification model. This is because the omission of one processing step on underspecification trials (i.e., RC attachment) predicts that the minimal amount of time required to process a relative clause should be less in ambiguous sentences than in both of their unambiguous counterparts. However, none of the 18 participants showed evidence for such a difference. Admittedly, this finding may not constitute strong evidence against underspecification, because we do not know the magnitude of the difference predicted by the underspecification models. It is possible that the minimum time to complete RC attachment is relatively short. For example, if the true intercept difference was only 20ms, a three-intercept model would not necessarily provide a substantial improvement in log-likelihood over a one-intercept model. The magnitude of this difference would depend on the number of data points close to the intercept. Thus, model selection on the basis of BIC-approximation to the Bayes factor could prefer the one-intercept model on the grounds of parsimony even if there was a small intercept difference in reality. In future research, the sensitivity of our method to small intercept differences may be improved by using adaptive experimentation [e.g., @MyungPitt:2009] in order to increase the number of informative data points around the intercept.
+Although our findings concerning intercepts alone do not constitute strong evidence against F-Underspecification, there is an additional argument against it: we found evidence for a higher asymptote in the ambiguous condition. Because higher asymptotes correspond to faster reading, the ambiguity advantage can be explained by the very same mechanism which explains the asymptote differences. The higher probability of parsing failures in unambiguous sentences, which the underspecification model needs to assume in order to account for our findings is entirely sufficient within the underspecification framework in order to account for the ambiguity advantage in reading. Thus, in the absence of mode direct evidence in favor of the parser’s ability to underspecify we see no reason to assume that it may be capable of such behavior. Importantly, this argument does not apply to the F-URM, because the prediction of a race as well as the prediction of higher asymptotes in ambiguous conditions follow from the same set of assumptions according to the URM, while in the strategic underspecification model, they the two effects are predicted by entirely separate components of the sentence comprehension system.
+
+… a bit on how underspecification is conceptually compatible with surprisal, and *maybe* the self-organizing approach (Smith, 2018), (Vosse & Kempen, 2009), (Cho, Goldrick, Smolensky, 2020) … and with Dillon et al.’s results
+
+- read that sample work about the amb advantage
+
+# Conclusion
+
+Taken together, our findings concerning asymptote and intercept differences provide preliminary evidence against an underspecification mechanism in the processing of RC attachment ambiguities and thus contradict Swets et al.’s (2008) claims. However, more research will be necessary to make more definitive conclusions.
+
 
 # XX
 
