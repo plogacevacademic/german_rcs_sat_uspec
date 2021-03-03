@@ -191,27 +191,19 @@ Specifically, the locus of the ambiguity advantage was at the word *moustache*, 
 \end{exe}
 ```
 <!-- \begin{exe} -->
-
 <!--   \ex \label{AA.Traxler} \begin{xlist} -->
-
 <!--      \ex \textsc{locally ambiguous, high attachment} \\  -->
-
 <!--           The \uline{father} of the ballerina $[$who found himself in a lot of trouble$]$ phoned the police. -->
-
 <!--      \ex \textsc{locally ambiguous, low attachment} \\  -->
-
 <!--           The father of the \uline{ballerina} $[$who found herself in a lot of trouble$]$  phoned the police. -->
-
 <!--      \ex \textsc{globally ambiguous} \\  -->
-
 <!--           The \uline{mother} of the \uline{ballerina} $[$who found herself in a lot of trouble$]$ phoned the police. -->
-
 <!--   \end{xlist} -->
-
 <!-- \end{exe} -->
 
-# Models of the Ambiguity Advantage
 
+
+# Models of the Ambiguity Advantage
 
 ## Race Models
 
@@ -740,7 +732,12 @@ Figure 6. Average d’ at different lags after the presentation of the two-word 
 Figure 7. Credible intervals for the coefficients of a non-linear hierarchical Bayesian model, by speed-accuracy trade-off function parameter (x-intercept, 1/rate, asymptote). Thin lines represent 95% CrIs and thick lines represent 80% CrIs. The model was fitted with transformed parameters, but estimates are presented in more easily interpretable units for convenience.
 --- 
 
-```{DataAnalysis.Summarize, echo=FALSE, results='hide', eval=TRUE}
+```{DataAnalysisSummarize, echo=FALSE, results='hide', eval=TRUE}
+
+source("../scripts/load_data.R")
+data_rc <- data
+
+source("../scripts/models_postprocessing.R")
 
 # compute 'yes' counts per time window
 data_rc_nyes <- data_rc %>% subset(maxlik_interval) %>%
@@ -757,7 +754,7 @@ data_rc_dprime %<>% subset(interval != 14)
 
 # compute d' per time window by participant
 data_rc_bysubj_dprime <- data_rc %>% subset(maxlik_interval) %>%
-                        group_by(subject, condition, interval) %>% 
+                        group_by(subject, gender, condition, interval) %>% 
                         summarize_n_responses() %>%
                         summarize_dprime(data_nyes = ., by_subject = T)
 
@@ -766,12 +763,12 @@ data_rc_bysubj_dprime <- data_rc %>% subset(maxlik_interval) %>%
 ```{DataAnalysis.PrepareModels, results='hide', echo=FALSE, eval=T, echo=FALSE}
 
 ### models fitted in "../models/models_create.R"
-fit_brms <- readRDS("../workspace/model_fits0/m_uncorr_bysubj1.rds")
+fit_brms <- readRDS("../workspace/model_fits/fit_all_uncorr_bysubj_1.rds")
 
 names_fixef <- fixef(fit_brms) %>% rownames %>% paste0("b_", .)
 fit_samples <- brms::posterior_samples(fit_brms) #, par = names_fixef)
 
-contr <- extract_constraints(data_rc)
+contr <- extract_contrasts(data_rc)
 samp_asym <- samples_extract_asymptotes(contrasts = contr, samples = fit_samples)
 samp_invrate <- samples_extract_invrates(contrasts = contr, samples = fit_samples)
 samp_intercept <- samples_extract_intercept(contrasts = contr, samples = fit_samples)

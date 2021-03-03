@@ -178,7 +178,7 @@ sat_bf <- function(dprime, crit,
   
   ret <- bf( responseGrammatical ~ 
                   criterion_fn(time, critLeftAsym, critRightAsym, critInvrate, critIntercept) -
-                  (0.5-is_ungrammatical)*dprime_fn(time, 0, dprimeAsymptote, dprimeInvrate, dprimeIntercept),
+                  (1-is_ungrammatical)*dprime_fn(time, is_ungrammatical, dprimeAsymptote, dprimeInvrate, dprimeIntercept),
               ufd( dprimeAsymptote ~ ., dprime_asymptote),
                   ufd( dprimeInvrate ~ ., dprime_invrate),
                   ufd( dprimeIntercept ~ ., dprime_intercept),
@@ -208,7 +208,7 @@ sat_bf_rep <- function(dprime, crit, p_rep,
   
   ret <- bf( responseGrammatical ~ 
              criterion_fn(time, critLeftAsym, critRightAsym, critInvrate, critIntercept) -
-                (0.5-is_ungrammatical)*dprime_fn(time, 0, dprimeAsymptote, dprimeInvrate, dprimeIntercept),
+                (1-is_ungrammatical)*dprime_fn(time, is_ungrammatical, dprimeAsymptote, dprimeInvrate, dprimeIntercept),
              ufd( dprimeAsymptote ~ ., dprime_asymptote),
                ufd( dprimeInvrate ~ ., dprime_invrate),
                ufd( dprimeIntercept ~ ., dprime_intercept),
