@@ -7,7 +7,7 @@
   // ------------------------------------------------------------------------------------------------------- //
   
   real transform_asymptote_dprime(real asymptote_unconstrained) {
-      real shift_center = +0.7;
+      real shift_center = +0;
       return exp(asymptote_unconstrained + shift_center);
   }
 

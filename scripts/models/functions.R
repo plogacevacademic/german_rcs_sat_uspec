@@ -35,6 +35,12 @@ subset_data_nocorr <- function(data, ...)
   cur_data
 }
 
+subset_data_binomial_nocorr <- function(data, ...)
+{
+  cur_data <- list(data = subset(data, ...))
+  cur_data
+}
+
 
 stan_satf_functions <- read_file("./math/satf_math_cdf.stan") %>% 
                         paste(., read_file("./math/satf_math.stan")) %>% 

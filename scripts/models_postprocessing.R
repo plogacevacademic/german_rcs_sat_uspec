@@ -1,3 +1,4 @@
+options(dplyr.summarise.inform = FALSE)
 
 # computes d', smooths by adding 0.25 to each count (i.e., 0.5 to the total) in order to avoid extremes values,
 # as recommended somewhere by Treisman
@@ -81,6 +82,7 @@ subject_adjustment_template <- function(x, samples, subject) {
     }
 }
 
+
 samples_extract_asymptotes <- function(contrasts, samples, subject=NULL)
 {
   subject_adjustment <- subject_adjustment_template("subject__dprimeAsymptote", samples, subject)
@@ -100,7 +102,7 @@ samples_extract_asymptotes <- function(contrasts, samples, subject=NULL)
     )
   
   samp_asym <- samp_asym_unconstr
-  samp_asym[,-1] %<>% add(0.7) %>% exp()
+  samp_asym[,-1] %<>% exp()
   samp_asym_unconstr %<>% samples_compute_target_differences()
   samp_asym %<>% samples_compute_target_differences()
   
@@ -127,7 +129,7 @@ samples_extract_invrates <- function(contrasts, samples, subject = NULL)
   )
   
   samp_invrate <- samp_invrate_unconstr
-  samp_invrate[,-1] %<>% add(0) %>% exp()
+  samp_invrate[,-1] %<>% exp()
   samp_invrate_unconstr %<>% samples_compute_target_differences()
   samp_invrate %<>% samples_compute_target_differences()
   
@@ -165,15 +167,15 @@ samples_extract_intercept <- function(contrasts, samples, subject = NULL)
 extract_contrasts <- function(data)
 {
   contr <- data %>% 
-              dplyr::select(full.condition, condition, cGenderMasc, cLowVsAvg, cHighVsAvg) %>% 
+              dplyr::select(full_condition, condition, cGenderMasc, cLowVsAvg, cHighVsAvg) %>% 
               unique() %>% subset(condition != "none") %>%
-              mutate( full_condition = full.condition %>% gsub("-", "_", .) ) %>%
-              dplyr::select(-full.condition)
+              mutate( full_condition = full_condition %>% gsub("-", "_", .) ) #%>%
+              #dplyr::select(-full_condition)
   rownames(contr) <- contr$full_condition
   contr
 }
 
-samples_summary <- function(fit_brms, contr, target_contr_names, subject = NULL)
+samples_summary <- function(fit_brms, contr, contr_names, subject = NULL)
 {
     names_fixef <- fixef(fit_brms) %>% rownames %>% paste0("b_", .)
     fit_samples <- brms::posterior_samples(fit_brms)#, par = names_fixef)
@@ -183,13 +185,13 @@ samples_summary <- function(fit_brms, contr, target_contr_names, subject = NULL)
     samples$invrate <- samples_extract_invrates(contrasts = contr, samples = fit_samples, subject = subject)
     samples$intercept <- samples_extract_intercept(contrasts = contr, samples = fit_samples, subject = subject)
     
-    samples$asym$constrained %<>% dplyr::select(all_of( c("idx", target_contr_names) ))
-    samples$invrate$constrained %<>% dplyr::select(all_of( c("idx", target_contr_names) ))
-    samples$intercept$constrained %<>% dplyr::select(all_of( c("idx", target_contr_names) ))
+    samples$asym$constrained %<>% dplyr::select(all_of( c("idx", contr_names) ))
+    samples$invrate$constrained %<>% dplyr::select(all_of( c("idx", contr_names) ))
+    samples$intercept$constrained %<>% dplyr::select(all_of( c("idx", contr_names) ))
     
-    if (!is.null(target_contr_names)) {
-      target_contr_names <- names(target_contr_names)
-    }
+    # if (!is.null(contr_names)) {
+    #   contr_names <- names(contr_names)
+    # }
     
     samp_params <- bind_rows(samples$asym$constrained %T>% {.$param <- "asymptote"},
                              samples$invrate$constrained %T>% {.$param <- "invrate"},
@@ -197,18 +199,20 @@ samples_summary <- function(fit_brms, contr, target_contr_names, subject = NULL)
                              ) 
     
     summary_params <- samp_params %>% 
-      tidyr::pivot_longer(all_of(target_contr_names), names_to = "name", values_to = "val") %>%
-      group_by(param, name) %>% 
-      summarize(lower95 = bayestestR::hdi(val, ci = .95)$CI_low,
-                upper95 = bayestestR::hdi(val, ci = .95)$CI_high,
+      tidyr::pivot_longer(all_of(names(contr_names)), names_to = "label", values_to = "val") %>%
+      group_by(param, label) %>% 
+      dplyr::summarize(
+                lower90 = bayestestR::hdi(val, ci = .9)$CI_low,
+                upper90 = bayestestR::hdi(val, ci = .9)$CI_high,
                 lower80 = bayestestR::hdi(val, ci = .8)$CI_low,
                 upper80 = bayestestR::hdi(val, ci = .8)$CI_high,
                 mid = bayestestR::map_estimate(val)[1], 
                 p_below_zero = mean(val < 0) )
     
     
-    summary_params$name %<>% factor(levels = c(rev(target_contr_names), "intercept") )
+    summary_params$label %<>% factor(levels = c(rev(names(contr_names)), "intercept") )
     summary_params$param %<>% factor(levels = c("intercept", "invrate", "asymptote") )
+    summary_params$name <- summary_params$label %>% dplyr::recode(!!!contr_names)
     
     summary_params
 }
@@ -240,4 +244,29 @@ summarize_dprime <- function(data_nyes, by_subject)
   
   data_dprime
 }
+
+
+fn_map <- function(condition) {
+  function(time) { dprime_fn(time, 0, 
+                             asymptote_unconstrained = bayestestR::map_estimate(samp_asym$unconstrained[[condition]]), 
+                             invrate_unconstrained = bayestestR::map_estimate(samp_invrate$unconstrained[[condition]]), 
+                             intercept_unconstrained = bayestestR::map_estimate(samp_intercept$unconstrained[[condition]]))
+  }
+}
+
+fn_index <- function(condition, idx) {
+  samp_asymptote_unconstrained = samp_asym$unconstrained[idx, condition] 
+  samp_invrate_unconstrained = samp_invrate$unconstrained[idx, condition]
+  samp_intercept_unconstrained = samp_intercept$unconstrained[idx, condition]
+  fn <- function(time) { 
+    dprime_fn(time, 0, 
+              asymptote_unconstrained = samp_asymptote_unconstrained, 
+              invrate_unconstrained = samp_invrate_unconstrained, 
+              intercept_unconstrained = samp_intercept_unconstrained)
+  }
+  fn(0)
+  fn
+}
+
+
 

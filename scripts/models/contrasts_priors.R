@@ -34,12 +34,12 @@ priors <- list()
 
 priors$dprime <- c(
 
-      # transformation: exp(x+0.7)
+      # transformation: exp(x)
       # * intercept to be kept roughly in [1; 4], with ~95% prob
-      #   -> (0.35 * c(-2,0,2) ) %>% add(.7) %>% exp() --> approximately in [1; 4]
+      #   -> (0.5 * c(-2,0,2) ) %>% add(0) %>% exp() --> approximately in [0; 4]
       # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 95% prob
-      #   -> ((.35*c(-2/2,0,2/2) ) %>% add(0.7) %>% exp()) %>% {.[3]/.[1]}
-      set_prior(nlpar = "dprimeAsymptote", prior = "normal(0, .35)", class = "b", coef = "Intercept"),
+      #   -> ((.5*c(-2/2,0,2/2) ) %>% add(0) %>% exp()) %>% {.[3]/.[1]}
+      set_prior(nlpar = "dprimeAsymptote", prior = "normal(0, .5)", class = "b", coef = "Intercept"),
       set_prior(nlpar = "dprimeAsymptote", prior = "normal(0, .35)", class = "b"),
       #
       # transformation: exp(x)
@@ -58,6 +58,31 @@ priors$dprime <- c(
       set_prior(nlpar = "dprimeIntercept", prior = "normal(0, .6)", class = "b", coef = "Intercept"),
       set_prior(nlpar = "dprimeIntercept", prior = "normal(0, .35)", class = "b")
     )
+
+
+priors$dprime_separate <- c(
+  
+  # transformation: exp(x)
+  # * intercept to be kept roughly in [1; 4], with ~95% prob
+  #   -> (0.5 * c(-2,0,2) ) %>% add(0) %>% exp() --> approximately in [0; 4]
+  # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 95% prob
+  #   -> ((.5*c(-2/2,0,2/2) ) %>% add(0) %>% exp()) %>% {.[3]/.[1]}
+  set_prior(nlpar = "dprimeAsymptote", prior = "normal(0, .5)", class = "b"),
+  #
+  # transformation: exp(x)
+  # * intercept to be kept roughly in [0.5; 1.5], with ~95% prob
+  #   -> (0.35 * c(-2,0,2) ) %>% add(0.0) %>% exp()
+  # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
+  #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(0.0) %>% exp()) %>% {.[3]/.[1]}
+  set_prior(nlpar = "dprimeInvrate", prior = "normal(0, .35)", class = "b"),
+  #
+  # transformation: exp(x - 1)
+  # * intercept to be kept roughly in [0.1; 1.2], with ~95% prob
+  #   -> (0.6 * c(-2,0,2) ) %>% add(-1) %>% exp()
+  # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
+  #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(-1) %>% exp()) %>% {.[3]/.[1]}
+  set_prior(nlpar = "dprimeIntercept", prior = "normal(0, .6)", class = "b")
+)
 
 priors$crit = c(
             # transformation: identity
@@ -195,9 +220,9 @@ sat_bf <- function(dprime, crit,
 }
 
 
-sat_bf_rep <- function(dprime, crit, p_rep,
-                       dprime_asymptote=NULL, dprime_invrate=NULL, dprime_intercept=NULL, 
-                       crit_leftasym=NULL, crit_rightasym=NULL, crit_invrate=NULL, crit_intercept=NULL)
+sat_bf_binomial <- function(dprime, crit,
+                   dprime_asymptote=NULL, dprime_invrate=NULL, dprime_intercept=NULL, 
+                   crit_leftasym=NULL, crit_rightasym=NULL, crit_invrate=NULL, crit_intercept=NULL)
 {
   uf <- function(dv_formula, formula_def, formula_alt = NULL) {
     formula <- if(is.null(formula_alt)) { formula_def } else { formula_alt }
@@ -206,81 +231,114 @@ sat_bf_rep <- function(dprime, crit, p_rep,
   ufd <- function(dv_formula, formula_alt = NULL) uf(dv_formula, dprime, formula_alt)
   ufc <- function(dv_formula, formula_alt = NULL) uf(dv_formula, crit, formula_alt)
   
-  ret <- bf( responseGrammatical ~ 
-             criterion_fn(time, critLeftAsym, critRightAsym, critInvrate, critIntercept) -
-                (1-is_ungrammatical)*dprime_fn(time, is_ungrammatical, dprimeAsymptote, dprimeInvrate, dprimeIntercept),
+  
+  # 
+  ret <- bf( n_yes | trials(n) ~ 
+               -criterion_fn(time, critLeftAsym, critRightAsym, critInvrate, critIntercept) +
+               (1-is_ungrammatical)*dprime_fn(time, is_ungrammatical, dprimeAsymptote, dprimeInvrate, dprimeIntercept),
              ufd( dprimeAsymptote ~ ., dprime_asymptote),
-               ufd( dprimeInvrate ~ ., dprime_invrate),
-               ufd( dprimeIntercept ~ ., dprime_intercept),
+             ufd( dprimeInvrate ~ ., dprime_invrate),
+             ufd( dprimeIntercept ~ ., dprime_intercept),
              ufc( critLeftAsym ~ ., crit_leftasym),
-               ufc( critRightAsym ~ ., crit_rightasym),
-               ufc( critInvrate ~ ., crit_invrate),
-               ufc( critIntercept ~ ., crit_intercept),
-             
-             nlf(pRep ~ pRepIcpt + pRepSlope*delta_dprime_crit_fn(last_time, time, is_ungrammatical,
-                                                                   dprimeAsymptote, dprimeInvrate, dprimeIntercept,
-                                                                   critLeftAsym, critRightAsym, critInvrate, critIntercept) ),
-             uf( pRepIcpt ~ 1, p_rep ),
-             uf( pRepSlope ~ 1, p_rep ),
-             
-             family = bernoulli_normal_rep,
+             ufc( critRightAsym ~ ., crit_rightasym),
+             ufc( critInvrate ~ ., crit_invrate),
+             ufc( critIntercept ~ ., crit_intercept),
+             # dprime_asymptote, dprime_invrate, dprime_intercept,
+             # crit_leftasym, crit_rightasym, crit_invrate, crit_intercept,
+             family = binomial(link = "probit"),
              nl = TRUE)
   print(ret)
   ret
 }
 
 
-sat_bf_corr <- function(dprime, crit, rho,
-                        dprime_asymptote=NULL, dprime_invrate=NULL, dprime_intercept=NULL, 
-                        crit_leftasym=NULL, crit_rightasym=NULL, crit_invrate=NULL, crit_intercept=NULL)
-{
-  uf <- function(dv_formula, formula_def, formula_alt = NULL) {
-    formula <- if(is.null(formula_alt)) { formula_def } else { formula_alt }
-    update.formula(dv_formula, formula)
-  }
-  ufd <- function(dv_formula, formula_alt = NULL) uf(dv_formula, dprime, formula_alt)
-  ufc <- function(dv_formula, formula_alt = NULL) uf(dv_formula, crit, formula_alt)
-  
-    ret <- bf( # current response: d' + criterion formula
-              formula = responseGrammatical ~ criterion_fn(time, critLeftAsym, critRightAsym, critInvrate, critIntercept) -
-                                              dprime_fn(time, is_ungrammatical, dprimeAsymptote, dprimeInvrate, dprimeIntercept),
-
-              # last response: d' + criterion formula
-              nlf( lastMu ~ criterion_fn(last_time, critLeftAsym, critRightAsym, critInvrate, critIntercept) -
-                              dprime_fn(last_time, is_ungrammatical, dprimeAsymptote, dprimeInvrate, dprimeIntercept) ),
-
-              ufd( dprimeAsymptote ~ ., dprime_asymptote),
-                  ufd( dprimeInvrate ~ ., dprime_invrate),
-                  ufd( dprimeIntercept ~ ., dprime_intercept),
-              ufc( critLeftAsym ~ ., crit_leftasym),
-                  ufc( critRightAsym ~ ., crit_rightasym),
-                  ufc( critInvrate ~ ., crit_invrate),
-                  ufc( critIntercept ~ ., crit_intercept),
-              uf( rho ~ ., rho ),
-
-              family = bernoulli_normal_rep,
-              nl = TRUE
-            )
-
-  ret
-}
-
-
-# cumulative conditional normal distribution 
-bernoulli_normal_cc <- custom_family(
-  "bernoulli_normal_cc", dpars = c("mu", "lastMu", "rho"),
-  links = c("identity", "identity", "identity"),
-  lb = c(NA, NA, NA), ub = c(NA, NA, NA),
-  type = "int", vars = c("last_responseGrammatical[n]", "delta_time[n]")
-)
-
-# assumes repetition of responses
-bernoulli_normal_rep <- custom_family(
-  "bernoulli_normal_rep", dpars = c("mu", "pRep"),
-  links = c("identity", "identity"),
-  lb = c(NA, NA), ub = c(NA, NA),
-  type = "int", vars = c("last_responseGrammatical[n]", "delta_time[n]")
-)
+#
+# sat_bf_rep <- function(dprime, crit, p_rep,
+#                        dprime_asymptote=NULL, dprime_invrate=NULL, dprime_intercept=NULL, 
+#                        crit_leftasym=NULL, crit_rightasym=NULL, crit_invrate=NULL, crit_intercept=NULL)
+# {
+#   uf <- function(dv_formula, formula_def, formula_alt = NULL) {
+#     formula <- if(is.null(formula_alt)) { formula_def } else { formula_alt }
+#     update.formula(dv_formula, formula)
+#   }
+#   ufd <- function(dv_formula, formula_alt = NULL) uf(dv_formula, dprime, formula_alt)
+#   ufc <- function(dv_formula, formula_alt = NULL) uf(dv_formula, crit, formula_alt)
+#   
+#   ret <- bf( responseGrammatical ~ 
+#              criterion_fn(time, critLeftAsym, critRightAsym, critInvrate, critIntercept) -
+#                 (1-is_ungrammatical)*dprime_fn(time, is_ungrammatical, dprimeAsymptote, dprimeInvrate, dprimeIntercept),
+#              ufd( dprimeAsymptote ~ ., dprime_asymptote),
+#                ufd( dprimeInvrate ~ ., dprime_invrate),
+#                ufd( dprimeIntercept ~ ., dprime_intercept),
+#              ufc( critLeftAsym ~ ., crit_leftasym),
+#                ufc( critRightAsym ~ ., crit_rightasym),
+#                ufc( critInvrate ~ ., crit_invrate),
+#                ufc( critIntercept ~ ., crit_intercept),
+#              
+#              nlf(pRep ~ pRepIcpt + pRepSlope*delta_dprime_crit_fn(last_time, time, is_ungrammatical,
+#                                                                    dprimeAsymptote, dprimeInvrate, dprimeIntercept,
+#                                                                    critLeftAsym, critRightAsym, critInvrate, critIntercept) ),
+#              uf( pRepIcpt ~ 1, p_rep ),
+#              uf( pRepSlope ~ 1, p_rep ),
+#              
+#              family = bernoulli_normal_rep,
+#              nl = TRUE)
+#   print(ret)
+#   ret
+# }
+# 
+# 
+# sat_bf_corr <- function(dprime, crit, rho,
+#                         dprime_asymptote=NULL, dprime_invrate=NULL, dprime_intercept=NULL, 
+#                         crit_leftasym=NULL, crit_rightasym=NULL, crit_invrate=NULL, crit_intercept=NULL)
+# {
+#   uf <- function(dv_formula, formula_def, formula_alt = NULL) {
+#     formula <- if(is.null(formula_alt)) { formula_def } else { formula_alt }
+#     update.formula(dv_formula, formula)
+#   }
+#   ufd <- function(dv_formula, formula_alt = NULL) uf(dv_formula, dprime, formula_alt)
+#   ufc <- function(dv_formula, formula_alt = NULL) uf(dv_formula, crit, formula_alt)
+#   
+#     ret <- bf( # current response: d' + criterion formula
+#               formula = responseGrammatical ~ criterion_fn(time, critLeftAsym, critRightAsym, critInvrate, critIntercept) -
+#                                               dprime_fn(time, is_ungrammatical, dprimeAsymptote, dprimeInvrate, dprimeIntercept),
+# 
+#               # last response: d' + criterion formula
+#               nlf( lastMu ~ criterion_fn(last_time, critLeftAsym, critRightAsym, critInvrate, critIntercept) -
+#                               dprime_fn(last_time, is_ungrammatical, dprimeAsymptote, dprimeInvrate, dprimeIntercept) ),
+# 
+#               ufd( dprimeAsymptote ~ ., dprime_asymptote),
+#                   ufd( dprimeInvrate ~ ., dprime_invrate),
+#                   ufd( dprimeIntercept ~ ., dprime_intercept),
+#               ufc( critLeftAsym ~ ., crit_leftasym),
+#                   ufc( critRightAsym ~ ., crit_rightasym),
+#                   ufc( critInvrate ~ ., crit_invrate),
+#                   ufc( critIntercept ~ ., crit_intercept),
+#               uf( rho ~ ., rho ),
+# 
+#               family = bernoulli_normal_rep,
+#               nl = TRUE
+#             )
+# 
+#   ret
+# }
+# 
+# 
+# # cumulative conditional normal distribution 
+# bernoulli_normal_cc <- custom_family(
+#   "bernoulli_normal_cc", dpars = c("mu", "lastMu", "rho"),
+#   links = c("identity", "identity", "identity"),
+#   lb = c(NA, NA, NA), ub = c(NA, NA, NA),
+#   type = "int", vars = c("last_responseGrammatical[n]", "delta_time[n]")
+# )
+# 
+# # assumes repetition of responses
+# bernoulli_normal_rep <- custom_family(
+#   "bernoulli_normal_rep", dpars = c("mu", "pRep"),
+#   links = c("identity", "identity"),
+#   lb = c(NA, NA), ub = c(NA, NA),
+#   type = "int", vars = c("last_responseGrammatical[n]", "delta_time[n]")
+# )
 
 # cumulative normal distribution (equivalent to a probit link, but the transformation by Phi() that brms automatically applies - 
 # instead, we go right for the *log*-probabilities of the responses).
