@@ -53,9 +53,12 @@
 \authornote{
 Many thanks to Shravan Vasishth for the extensive discussion of many ideas presented here as well as his contributions to this work, and to Bruno Nicenboim for extensive comments on early versions of this manuscript.
 Correspondence concerning this article should be addressed to Pavel Logačev.
+
+All data and code associated with this paper are available at \url{https://git.io/JEzwm}.
+
 Boğaziçi University, Department of Linguistics,
 Bebek, 34342 Istanbul. E-mail: pavel.logacev@gmail.com}
-\keywords{keywords\newline\indent Word count: X}
+\keywords{keywords\newline\indent Word count: 9,361}
 
 \date{}
 
@@ -210,7 +213,7 @@ source("../figures/scripts_figures/illustrations_coactivation.R")
 
 
 \abstract{
-A number of studies have found evidence for the so-called \textit{ambiguity advantage}, that is a speed-up in processing ambiguous sentences compared to their unambiguous counterparts. While a number of proposals regarding the mechanism underlying this mechanism have been made, the empirical evidence so far is far from unequivocal. It is compatible with several theories, including \textit{strategic underspecification} (Swets et al., 2008), \textit{race models} (Van Gompel et al., 2000; Logacev and Vasishth, 2016), and more recent \textit{coactivation-based accounts} (Dillon et al., 2019). While all three classes of theories make matching predictions for the \textit{average} time to complete RC attachment in ambiguous compared to unambiguous sentences, their predictions diverge with regard to the \textit{minimum completion times}. 
+A number of studies have found evidence for the so-called \textit{ambiguity advantage}, i.e., a speed-up in processing ambiguous sentences compared to their unambiguous counterparts. While a number of proposals regarding the mechanism underlying this phenomenon have been made, the empirical evidence so far is far from unequivocal. It is compatible with several theories, including \textit{strategic underspecification} (Swets et al., 2008), \textit{race models} (Van Gompel et al., 2000; Logacev and Vasishth, 2016), and a more recent \textit{coactivation-based account} (Dillon et al., 2019). While all three classes of theories make matching predictions for the \textit{average time} to complete RC attachment in ambiguous compared to unambiguous sentences, their predictions diverge with regard to the \textit{minimum completion times}. 
 I used the speed-accuracy tradeoff procedure to test the predictions of all three classes of theories.
 According to a hierarchical Bayesian model, the speed-accuracy tradeoff functions (SATFs) for different RC attachment conditions (high, low or ambiguous) show an earlier departure from chance performance in the ambiguous condition than in either of the unambiguous conditions. The results further indicate increased asymptotic accuracy but no increase in processing rate in the ambiguous condition. Taken together, this pattern of results is compatible with the strategic underspecification model, and to a lesser degree with coactivation based accounts.
 }
@@ -577,7 +580,7 @@ Because the fastest attachment times in the unambiguous conditions are also the 
 
 Although \citeapos{LewisVasishth:2005} cue-based parsing model is a type of race model \citep{NicenboimVasishth:2018}, the probability of a successful retrieval does not follow equation \ref{eq:eq1SMCM} because retrieval of both possible attachment sites is slowed due to \textit{cue-overload} \citep[e.g.,][]{EngelmannEtAl2019CogSci} in the ambiguous condition: While in unambiguous conditions, a gender match between the relative pronoun and the RC attachment site uniquely identifies it, the retrieval cue \textit{gender} matches two NPs in the the ambiguous condition. 
 The result of this is the decreased uniqueness of the retrieval cue \textit{gender}, which in turn slows the potential retrieval of either attachment site relative to its retrieval in the unambiguous conditions.
-The magnitude of the slowdown of the latent retrieval processes relative to their counterparts in unambiguous conditions depends on several ACT-R parameters, but its consequence is that the probability of having successfully retrieved any of the two potential attachment sites at any given point in time in the ambiguous condition is as in equation \ref{eq:eqLCRace}, where $F'_H$ and $F'_L$ are the distribution functions of the slowed retrieval processes corresponding to high and low attachment.\footnote{ Due to the cue-overload related slowdown, $F_H$ and $F_L$ stochastically dominate $F'_H$ and $F'_L$ respectively, such that $F'_H(t) < F_H(t)$ and $F'_L(t) < F_L(t)$ for all $t$ such that $F_{L/H}(t) > 0 and F'_{L/H}(t) < 1$.} This relationship is illustrated in figure \ref{fig:predictionsLCRace}, where $F'_H$ and $F'_L$ are represented by dotted lines.
+The magnitude of the slowdown of the latent retrieval processes relative to their counterparts in unambiguous conditions depends on several ACT-R parameters, but its consequence is that the probability of having successfully retrieved any of the two potential attachment sites at any given point in time in the ambiguous condition is as in equation \ref{eq:eqLCRace}, where $F'_H$ and $F'_L$ are the distribution functions of the slowed retrieval processes corresponding to high and low attachment.\footnote{ Due to the cue-overload related slowdown, $F_H$ and $F_L$ stochastically dominate $F'_H$ and $F'_L$ respectively, such that $F'_H(t) < F_H(t)$ and $F'_L(t) < F_L(t)$ for all $t$ such that $F_{L/H}(t) > 0$ and $F'_{L/H}(t) < 1$.} This relationship is illustrated in figure \ref{fig:predictionsLCRace}, where $F'_H$ and $F'_L$ are represented by dotted lines.
 
 \begin{equation}
 F_{A}(t) = F'_{H}(t) + F'_{L}(t) - F'_{H}(t) \cdot F'_{L}(t)
@@ -762,7 +765,7 @@ We created one randomized list which half the participants saw in its regular or
 \subsection{Data Analysis}
 
 All data pre-processing and plotting was carried out in \emph{R} R \citep{R} using the packages \emph{tidyverse} and \emph{ggplot2} \citep{tidyverse}.
-Statistical modeling was carried out using the packages \emph{brms} \citep{brms} and \emph{rstan} \citep{rstan} to fit a hierarchical nonlinear model with by-participant random effects. All data and code associated with this paper is available at \url{https://git.io/JEzwm}.
+Statistical modeling was carried out using the packages \emph{brms} \citep{brms} and \emph{rstan} \citep{rstan} to fit a hierarchical nonlinear model with by-participant random effects. 
 
 Two participants' data was excluded from further analysis, because they failed to consistently failed to correctly classify the low attachment condition as acceptable. Even at the latest lag, they judged low attachment sentences as acceptable on only $9\%$ and $11\%$ of the trials, respectively. All remaining participants judged all grammatical conditions as acceptable in at least $40\%$ of the cases.
 
@@ -815,6 +818,8 @@ The only contrasts specified for the response criterion was relative pronoun gen
 Stan was used to run four sampling chains with 4000 iterations each, after a burn-in of 1000 iterations.
 While all coefficients were estimated on log-transformed parameters, the model's posterior MCMC were used to compute credible intervals and posterior probabilities on the original scale (seconds and $d'$ units). Unless qualified otherwise, all credible intervals in the results section are $90\%$ credible intervals.
 The posterior probability that a parameter is smaller than (or larger than) zero is above  90\% if the 80\% credible interval excludes zero, and larger than 95\% if the 90\% credible interval excludes zero. In addition to the credible intervals, the posterior probability of a particular parameter $\theta$ being smaller (or larger) than zero ($P(\theta < 0)$) was computed where required.   
+
+All data and code associated with this paper is available at \url{https://git.io/JEzwm}.
 
 \subsection{Results}
 
