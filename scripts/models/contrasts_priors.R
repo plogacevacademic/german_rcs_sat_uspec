@@ -45,44 +45,44 @@ priors$dprime <- c(
       # transformation: exp(x)
       # * intercept to be kept roughly in [0.5; 1.5], with ~95% prob
       #   -> (0.35 * c(-2,0,2) ) %>% add(0.0) %>% exp()
-      # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
-      #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(0.0) %>% exp()) %>% {.[3]/.[1]}
+      # * other coefficients should reflect differences of no more than factor 1.5 (or 0.75) with 99% prob
+      #   -> ((0.2 * c(-2/2,0,2/2) ) %>% add(0.0) %>% exp()) %>% {.[3]/.[1]}
       set_prior(nlpar = "dprimeInvrate", prior = "normal(0, .35)", class = "b", coef = "Intercept"),
-      set_prior(nlpar = "dprimeInvrate", prior = "normal(0, .35)", class = "b"),
+      set_prior(nlpar = "dprimeInvrate", prior = "normal(0, .2)", class = "b"),
       #
       # transformation: exp(x - 1)
       # * intercept to be kept roughly in [0.1; 1.2], with ~95% prob
       #   -> (0.6 * c(-2,0,2) ) %>% add(-1) %>% exp()
-      # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
-      #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(-1) %>% exp()) %>% {.[3]/.[1]}
+      # * other coefficients should reflect differences of no more than factor 1.5 (or 0.75) with 99% prob
+      #   -> ((0.2 * c(-2/2,0,2/2) ) %>% add(-1) %>% exp()) %>% {.[3]/.[1]}
       set_prior(nlpar = "dprimeIntercept", prior = "normal(0, .6)", class = "b", coef = "Intercept"),
-      set_prior(nlpar = "dprimeIntercept", prior = "normal(0, .35)", class = "b")
+      set_prior(nlpar = "dprimeIntercept", prior = "normal(0, .2)", class = "b")
     )
 
 
-priors$dprime_separate <- c(
-  
-  # transformation: exp(x)
-  # * intercept to be kept roughly in [1; 4], with ~95% prob
-  #   -> (0.5 * c(-2,0,2) ) %>% add(0) %>% exp() --> approximately in [0; 4]
-  # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 95% prob
-  #   -> ((.5*c(-2/2,0,2/2) ) %>% add(0) %>% exp()) %>% {.[3]/.[1]}
-  set_prior(nlpar = "dprimeAsymptote", prior = "normal(0, .5)", class = "b"),
-  #
-  # transformation: exp(x)
-  # * intercept to be kept roughly in [0.5; 1.5], with ~95% prob
-  #   -> (0.35 * c(-2,0,2) ) %>% add(0.0) %>% exp()
-  # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
-  #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(0.0) %>% exp()) %>% {.[3]/.[1]}
-  set_prior(nlpar = "dprimeInvrate", prior = "normal(0, .35)", class = "b"),
-  #
-  # transformation: exp(x - 1)
-  # * intercept to be kept roughly in [0.1; 1.2], with ~95% prob
-  #   -> (0.6 * c(-2,0,2) ) %>% add(-1) %>% exp()
-  # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
-  #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(-1) %>% exp()) %>% {.[3]/.[1]}
-  set_prior(nlpar = "dprimeIntercept", prior = "normal(0, .6)", class = "b")
-)
+# priors$dprime_separate <- c(
+#   
+#   # transformation: exp(x)
+#   # * intercept to be kept roughly in [1; 4], with ~95% prob
+#   #   -> (0.5 * c(-2,0,2) ) %>% add(0) %>% exp() --> approximately in [0; 4]
+#   # * other coefficients should reflect differences of no more than factor 1.5 (or 0.75) with 95% prob
+#   #   -> ((.5*c(-2/2,0,2/2) ) %>% add(0) %>% exp()) %>% {.[3]/.[1]}
+#   set_prior(nlpar = "dprimeAsymptote", prior = "normal(0, .5)", class = "b"),
+#   #
+#   # transformation: exp(x)
+#   # * intercept to be kept roughly in [0.5; 1.5], with ~95% prob
+#   #   -> (0.35 * c(-2,0,2) ) %>% add(0.0) %>% exp()
+#   # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
+#   #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(0.0) %>% exp()) %>% {.[3]/.[1]}
+#   set_prior(nlpar = "dprimeInvrate", prior = "normal(0, .35)", class = "b"),
+#   #
+#   # transformation: exp(x - 1)
+#   # * intercept to be kept roughly in [0.1; 1.2], with ~95% prob
+#   #   -> (0.6 * c(-2,0,2) ) %>% add(-1) %>% exp()
+#   # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
+#   #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(-1) %>% exp()) %>% {.[3]/.[1]}
+#   set_prior(nlpar = "dprimeIntercept", prior = "normal(0, .6)", class = "b")
+# )
 
 priors$crit = c(
             # transformation: identity
@@ -100,30 +100,30 @@ priors$crit = c(
             # transformation: exp(x)
             # * intercept to be kept roughly in [0.5; 1.5], with ~95% prob
             #   -> (0.35 * c(-2,0,2) ) %>% add(0.0) %>% exp()
-            # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
-            #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(0.0) %>% exp()) %>% {.[3]/.[1]}
+            # * other coefficients should reflect differences of no more than factor 1.5 (or 0.75) with 99% prob
+            #   -> ((0.2 * c(-2/2,0,2/2) ) %>% add(0.0) %>% exp()) %>% {.[3]/.[1]}
             set_prior(nlpar = "critInvrate", prior = "normal(0, 0.35)", class = "b", coef = "Intercept"),
-            set_prior(nlpar = "critInvrate", prior = "normal(0, 0.35)", class = "b"),
+            set_prior(nlpar = "critInvrate", prior = "normal(0, 0.2)", class = "b"),
             #
             # transformation: exp(x - 1)
             # * intercept to be kept roughly in [0.1; 1.2], with ~95% prob
             #   -> (0.6 * c(-2,0,2) ) %>% add(-1) %>% exp()
-            # * other coefficients should reflect differences of no more than factor 2 (or 0.5) with 99% prob
+            # * other coefficients should reflect differences of no more than factor 1.5 (or 0.75) with 99% prob
             #   -> ((0.35 * c(-2/2,0,2/2) ) %>% add(-1) %>% exp()) %>% {.[3]/.[1]}
             set_prior(nlpar = "critIntercept", prior = "normal(0, .35)", class = "b", coef = "Intercept"),
-            set_prior(nlpar = "critIntercept", prior = "normal(0, .35)", class = "b")
+            set_prior(nlpar = "critIntercept", prior = "normal(0, .2)", class = "b")
           )
-priors$rho = c(  set_prior(dpar = "rho", "normal(1, 1)",  class = "Intercept") 
-			  	      #set_prior(dpar = "rho", "normal(0.5, 0.75)",  class = "Intercept") 
-			        )
-priors$p_rep = c(  set_prior(nlpar = "pRepIcpt", "normal(1, 1)", class = "b"),
-                   set_prior(nlpar = "pRepSlope", "normal(-1, 1)", class = "b")
-                )
-
-# ggdist::qstudent_t(1-c(.05)/2, df=50, mu=0, sigma=.3)
-# ggdist::qstudent_t(1-.01/2, df=50, mu=0, sigma=.4)
-# ggdist::qstudent_t(1-.01/2, df=50, mu=0, sigma=.2)
-
+# priors$rho = c(  set_prior(dpar = "rho", "normal(1, 1)",  class = "Intercept") 
+# 			  	      #set_prior(dpar = "rho", "normal(0.5, 0.75)",  class = "Intercept") 
+# 			        )
+# priors$p_rep = c(  set_prior(nlpar = "pRepIcpt", "normal(1, 1)", class = "b"),
+#                    set_prior(nlpar = "pRepSlope", "normal(-1, 1)", class = "b")
+#                 )
+# 
+# # ggdist::qstudent_t(1-c(.05)/2, df=50, mu=0, sigma=.3)
+# # ggdist::qstudent_t(1-.01/2, df=50, mu=0, sigma=.4)
+# # ggdist::qstudent_t(1-.01/2, df=50, mu=0, sigma=.2)
+# 
 
 priors$dprime_randef_subj = c(
             # Let the by-subject intercept vary from 1/3 to 3 times the grand mean with prob of 95%,

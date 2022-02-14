@@ -1,4 +1,4 @@
-\documentclass[english, man]{apa7} % jou
+\documentclass[english, doc]{apa7} % jou
 
 \usepackage[]{graphicx}
 \usepackage[]{color}
@@ -10,7 +10,7 @@
 \usepackage{ifxetex,ifluatex}
 
 \hypersetup{
-  pdftitle={The Role of Underspecification in Relative Clause Attachment: Speed-accuracy tradeoff evidence},
+  pdftitle={The Role of Underspecification in Relative Clause Attachment: Speed-Accuracy Tradeoff Evidence},
   pdflang={en-EN},
   pdfkeywords={keywords},
   hidelinks,
@@ -27,6 +27,7 @@
 \usepackage{hhline}
 \usepackage{mathtools}
 \usepackage{gb4e}\noautomath
+\usepackage{soul}
 
 \usepackage[normalem]{ulem}
 
@@ -44,21 +45,20 @@
 \def \todo#1 { \colorbox{yellow!30}{#1} }
 
 
-\title{The Role of Underspecification in Relative Clause Attachment: Speed-accuracy tradeoff evidence}
+\title{The Role of Underspecification in Relative Clause Attachment: Speed-Accuracy Tradeoff Evidence}
 \shorttitle{Underspecification in RC Attachment}
 \author{Pavel Logačev\textsuperscript{1}}
 \affiliation{
 \vspace{0.5cm}
 \textsuperscript{1} Boğaziçi University, Istanbul, Turkey}
 \authornote{
-Many thanks to Shravan Vasishth for the extensive discussion of many ideas presented here as well as his contributions to this work, and to Bruno Nicenboim for extensive comments on early versions of this manuscript.
+I would like to thank Shravan Vasishth for the extensive discussion of many ideas presented here as well as his contributions to this work, Bruno Nicenboim for his help with a variety of issues pertaining to the statistical model used in this paper and for his comments on early versions of this manuscript, as well as two anonymous reviewers whose extensive comments significantly helped to improve the paper. \\
+All data and code associated with this paper are available at \url{https://osf.io/z8tv9}.
+
 Correspondence concerning this article should be addressed to Pavel Logačev.
-
-All data and code associated with this paper are available at \url{https://git.io/JEzwm}.
-
 Boğaziçi University, Department of Linguistics,
-Bebek, 34342 Istanbul. E-mail: pavel.logacev@gmail.com}
-\keywords{keywords\newline\indent Word count: 9,361}
+Bebek, 34342 Istanbul. E-mail: pavel.logacev@boun.edu.tr}
+\keywords{keywords\newline\indent Word count: 11,172}
 
 \date{}
 
@@ -98,6 +98,12 @@ Bebek, 34342 Istanbul. E-mail: pavel.logacev@gmail.com}
 \newcommand{\citeapos}[1]{\citeauthor{#1}'s (\citeyear{#1})}
 
 
+
+\def \red  {\color{red}}
+\def \redx#1 { \textcolor{red}{#1} }
+
+%\def \red  { }
+%\def \redx#1 { #1 }
 
 
 % ```{=html}
@@ -213,9 +219,10 @@ source("../figures/scripts_figures/illustrations_coactivation.R")
 
 
 \abstract{
-A number of studies have found evidence for the so-called \textit{ambiguity advantage}, i.e., a speed-up in processing ambiguous sentences compared to their unambiguous counterparts. While a number of proposals regarding the mechanism underlying this phenomenon have been made, the empirical evidence so far is far from unequivocal. It is compatible with several theories, including \textit{strategic underspecification} (Swets et al., 2008), \textit{race models} (Van Gompel et al., 2000; Logacev and Vasishth, 2016), and a more recent \textit{coactivation-based account} (Dillon et al., 2019). While all three classes of theories make matching predictions for the \textit{average time} to complete RC attachment in ambiguous compared to unambiguous sentences, their predictions diverge with regard to the \textit{minimum completion times}. 
-I used the speed-accuracy tradeoff procedure to test the predictions of all three classes of theories.
-According to a hierarchical Bayesian model, the speed-accuracy tradeoff functions (SATFs) for different RC attachment conditions (high, low or ambiguous) show an earlier departure from chance performance in the ambiguous condition than in either of the unambiguous conditions. The results further indicate increased asymptotic accuracy but no increase in processing rate in the ambiguous condition. Taken together, this pattern of results is compatible with the strategic underspecification model, and to a lesser degree with coactivation based accounts.
+A number of studies have found evidence for the so-called \textit{ambiguity advantage}, \redx{that is, faster processing of} ambiguous sentences compared to unambiguous counterparts. While a number of proposals regarding the mechanism underlying this phenomenon have been made, the empirical evidence so far is far from unequivocal. It is compatible with several theories, including \textit{strategic underspecification} (Swets et al., 2008), \textit{race models} (Van Gompel et al., 2000; Logacev and Vasishth, 2016), and a more recent \textit{coactivation-based account} (Dillon et al., 2019). While all three classes of theories make matching predictions for the \textit{average time} to complete RC attachment in ambiguous compared to unambiguous sentences, their predictions diverge with regard to the \textit{minimum completion times}. 
+The speed-accuracy tradeoff procedure \redx{was used} to test the predictions of all three classes of theories. According to a hierarchical Bayesian model, the speed-accuracy tradeoff functions (SATFs) for \redx{ambiguous} RC attachment conditions
+show an earlier departure from chance performance 
+than in either \redx{high or low attachment} conditions. The results further indicate increased asymptotic accuracy \redx{in the ambiguous condition} but no increase in processing rate. Taken together, this pattern of results is compatible with the strategic underspecification model and coactivation-based accounts, \redx{but not with race models}.
 }
 
 \begin{document}
@@ -241,11 +248,14 @@ The parser is also assumed to be deterministic, which means that given a particu
 Over time, all these claims---seriality, determinism, complete structure building, and the priority of syntax---have come to be challenged.
 Constraint-based models \citep[e.g.,][]{McRaeEtAl:1998} abandoned the syntax-first assumption, allowing all kinds of information (syntax, semantics, plausibility, etc.) to be used simultaneously for making parsing decisions.
 The good-enough processing account \citep[e.g.,][]{ChristiansonEtAl:2001, Ferreira:2003, SwetsEtAl:2008} abandoned the assumption that elaborate structural representations are built no matter what the comprehension task.
-Finally, non-deterministic race-based models such as \citep{VanGompelEtAl:2000, Lewis:2000, LogacevVasishth:2016} abandoned both the syntax-first assumption and determinism, allowing for variability concerning which parse is built from one moment to the next.
+Later, non-deterministic race-based models such as \citep{VanGompelEtAl:2000, Lewis:2000, LogacevVasishth:2016} abandoned both the syntax-first assumption and determinism, allowing for variability concerning which parse is built from one moment to the next.
+\redx{
+More recently, the coactivation-based account proposed by \citet{DillonEtAl:2019} has abandoned the idea of competition between simultaneously available parses, counter \citet{McRaeEtAl:1998}.
+}
 
 Among all these alternatives to the Garden-path model, the non-determinism proposal of the race-based models is the most provocative because it makes a very surprising prediction that is empirically attested: the ambiguity advantage.
 \citet{TraxlerEtAl:1998} found that among sentences like (\ref{AA.Traxler}), ambiguous sentences were read faster than their unambiguous counterparts.
-Specifically, the locus of the ambiguity advantage was at the word \emph{moustache}, which the point of disambiguation in (\ref{AA.Traxler}a) and (\ref{AA.Traxler}b).
+Specifically, the locus of the ambiguity advantage was at the word \emph{moustache}, which is the point of disambiguation in (\ref{AA.Traxler}a) and (\ref{AA.Traxler}b).
 \citep{TraxlerEtAl:1998} found that it was read faster in sentences like (\ref{AA.Traxler}c), where it did not disambiguate the relative clause attachment, than in sentences like (\ref{AA.Traxler}a) and (\ref{AA.Traxler}b), where it did.
 
 \begin{exe}
@@ -272,7 +282,8 @@ Specifically, the locus of the ambiguity advantage was at the word \emph{moustac
 %<!-- \end{exe} -->
 
 
-The aim of this paper is to test the predictions of multiple accounts of the ambiguity advantage using the speed-accuracy tradeoff methodology \citep[e.g.,][]{McElreeDosher:1989}, with a particular focus on their predictions regarding minimum processing time and asymptotic accuracy in ambiguous compared to unambiguous sentences.
+The aim of this paper is to test the predictions of multiple accounts of the ambiguity advantage using the speed-accuracy tradeoff methodology \citep[e.g.,][]{McElreeDosher:1989}, with a particular focus on their predictions regarding minimum processing time and asymptotic accuracy in ambiguous compared to unambiguous sentences. \redx{The results of the experiment presented here suggest that ambiguous sentences are associated with lower minimum processing times and thus provide evidence against race models.}
+
 
 
 \section{Accounts of the Ambiguity Advantage}
@@ -281,19 +292,18 @@ The aim of this paper is to test the predictions of multiple accounts of the amb
 
 To account for the ambiguity advantage effect, \citet{VanGompelEtAl:2000} proposed a new model of ambiguity resolution, the Unrestricted Race Model (URM).
 It assumes that the parser attempts to build all permissible structures simultaneously.
-As soon as one structure has been constructed, all ongoing structure building is terminated and the structure built first \emph{`wins the race'}.
+As soon as one structure has been constructed, all ongoing structure building is terminated and the structure built first `wins the race'.
 Importantly, the time required to construct a particular parse is assumed to be influenced not only by the structural complexity of the parse (as in the Garden-path model), but by all available sources of information, including world knowledge.
 As a result, the time required to build a particular structure is assumed to vary from sentence to sentence, and because the parser always adopts the interpretation that takes the least time to be constructed, the parser's behavior is \emph{non-deterministic}.
 
-The explanation of the ambiguity advantage follows from this behavior: In all the sentences in (\ref{AA.Traxler}), the parser non-deterministically attaches the relative clause either high or low, as soon as it encounters the relativizer \emph{that}. In some cases, this attachment later turns out to be wrong in (\ref{AA.Traxler}a) and (\ref{AA.Traxler}b), and leads to reanalysis when the parser encounters the disambiguating word \emph{`moustache'}.
+The explanation of the ambiguity advantage follows from this behavior. In all the sentences in (\ref{AA.Traxler}), the parser non-deterministically attaches the relative clause either high or low, as soon as it encounters the relativizer \emph{that}. In some cases, this attachment later turns out to be wrong in (\ref{AA.Traxler}a) and (\ref{AA.Traxler}b), and leads to reanalysis when the parser encounters the disambiguating word \emph{`moustache'}.
 No reanalysis is necessary in ambiguous sentences like (\ref{AA.Traxler}c), because they are compatible with any attachment.
 
 \subsubsection{SMCM}
 
-\citet{LogacevVasishth:2016} proposed another race-based model called SMCM \emph{(stochastic multiple-channel model of ambiguity resolution) }which shares most of the assumptions of the URM, such as that of a race between multiple structure-building processes, as well as the simultaneous availability of all information sources. In contrast to the URM, however, it assumes that RC attachment takes place after the RC has been processed. Therefore, its explanation of the ambiguity advantage in the ambiguous conditions is not based on the absence of reanalysis in the ambiguous conditions, but rather on \textit{statistical facilitation}(\citeauthor{Raab:1962}, \citeyear{Raab:1962} as cited in \citeauthor{Miller:1982}, \citeyear{Miller:1982}) in the ambiguous condition: It predicts shorter \textit{average} RC attachment times in ambiguous sentences compared to unambiguous sentences due to a smaller proportion of relatively long RC attachment times compared to their unambiguous counterparts, which is the result of a race between two attachment processes in ambiguous sentences.
+\citet{LogacevVasishth:2016} proposed another race-based model called SMCM \emph{(stochastic multiple-channel model of ambiguity resolution) }which shares most of the assumptions of the URM, such as that of a race between multiple structure-building processes, as well as the simultaneous availability of all information sources. In contrast to the URM, however, it assumes that RC attachment takes place after the RC has been processed. Therefore, its explanation of the ambiguity advantage in the ambiguous conditions is not based on the absence of reanalysis in the ambiguous conditions, but rather on \textit{statistical facilitation} (\citeauthor{Raab:1962}, \citeyear{Raab:1962} as cited in \citeauthor{Miller:1982}, \citeyear{Miller:1982}) in the ambiguous condition: It predicts shorter \textit{average} RC attachment times in ambiguous sentences compared to unambiguous sentences due to a smaller proportion of relatively long RC attachment times compared to their unambiguous counterparts, which is the result of a race between two attachment processes in ambiguous sentences.
 
-
-Figure \ref{fig:illustrationSMCMTime} illustrates the logic of stochastic facilitation: According to the SMCM, when two attachment processes are engaged in a race, the RC attachment time in ambiguous conditions is unlikely to be long, since that can only happen if \emph{both} attachment processes require a lot of time.
+Figure \ref{fig:illustrationSMCMTime} illustrates the logic of stochastic facilitation. According to the SMCM, when two attachment processes are engaged in a race, the RC attachment time in ambiguous conditions is unlikely to be long, since that can only happen if \emph{both} attachment processes require a lot of time.
 In unambiguous conditions, on the other hand, only one attachment process determines the RC attachment duration and long RC attachment completion times are thus much more likely.
 The lower probability of long completion times in the ambiguous condition means that the mean RC attachment time in the ambiguous condition should be lower and constitutes the predicted statistical facilitation, which is illustrated in figure \ref{fig:illustrationSMCMTime}.
 
@@ -309,17 +319,21 @@ The lower probability of long completion times in the ambiguous condition means 
 The SMCM and URM both assume that the two attachment processes which are carried out in the ambiguous condition operate at the same speed as in the unambiguous conditions. Because of this assumption, both can be characterized as \textit{unlimited capacity systems} 
 \citep[e.g.,][]{VanZandt:2002}, as the execution of multiple processes does not decrease the speed of either of the processes compared to when each process is executed alone.
 
-Importantly, there is at least one well-known mechanism that assumes a \textit{limited capacity} race: 
+
+
+Importantly, there is at least one well-known mechanism that assumes a \textit{limited capacity} race.
 In the cue-based parsing framework \citep{LewisVasishth:2005}, which is based on the ACT-R architecture \citep{AndersonEtAl:2004}, relative clause attachment can be conceptualized as cue-based memory retrieval of the attachment site.
 Under this account, the attachment site in sentence like in (\ref{AA.Traxler}) would be retrieved with retrieval cues based on the meaning of the relative clause, such as \emph{[+human]}.
 In the unambiguous sentences (\ref{AA.Traxler}a,b), only one memory trace would match those retrieval cues.
 In the ambiguous condition (\ref{AA.Traxler}c), however, there are two matching memory traces, since both \emph{son} and \emph{driver} are \emph{[+human]} and can have a moustache.
-Therefore, the parser sometimes retrieves one noun phrase, and sometimes the other.
+Therefore, the parser \redx{may} sometimes retrieve one noun phrase and sometimes the other.
+
 
 Recently, \citet{NicenboimVasishth:2018} have demonstrated that when multiple memory traces can be retrieved, the ACT-R retrieval process is equivalent to a race between multiple retrieval processes.
 In a model of RC attachment based on cue-based retrieval, the retrieval latency and therefore the attachment time of the RC are determined in large part by the degree of match between retrieval cues and the memory trace, weighted by the degree to which the cues \emph{uniquely identify} the memory trace.
 Importantly, the fact that in the ambiguous condition, not one, but two noun phrases match all retrieval cues results in a \textit{cue-overload} \citep{VasishthEtAl2019TiCS}, i.e., a reduction in the \emph{uniqueness} of those cues, and thus increases the latencies of the retrieval processes involved in the race. The increase in retrieval latencies due to decreased uniqueness of retrieval cues is also known as the \emph{fan effect} \citep{AndersonReder:1999}.
-Importantly, the fan effect imposes an indirect \textit{capacity limitation}, in that each individual retrieval process is assumed to be slowed when it is executed alongside another retrieval process. Whether the cue-based parsing model predicts an ambiguity advantage depends on the extent to which the expected statistical facilitation due to the race is offset by the fan effect.  Importantly, some parameter combinations predict an ambiguity advantage.
+Importantly, the fan effect imposes an indirect \textit{capacity limitation}, in that each individual retrieval process is assumed to be slowed when it is executed alongside another retrieval process. Whether the cue-based parsing model predicts an ambiguity advantage depends on the extent to which the expected statistical facilitation due to the race is offset by the fan effect.  Importantly, some parameter combinations predict an ambiguity advantage.\footnote{This prediction hold regardless of whether RC attachment is assumed to take place only once the RC has been fully processed (as assumed by the SMCM) or whether it takes place immediately after encountering the relative pronoun (as assumed by the URM).}
+
 
 
 %In @TownsendEidels:2011's terms, this is a *limited capacity system*, whereas the SMCM is an %*unlimited capacity system*??
@@ -334,20 +348,25 @@ Importantly, the fan effect imposes an indirect \textit{capacity limitation}, in
 
 An important alternative to limited-capacity and unlimited-capacity models are so-called \textit{super-capacity models}, in which the speed of a process \textit{increases} when it runs alongside a competing process \citep{VanZandt:2002}. Models of this type have been proposed in the context of the \textit{redundant signal paradigm} \citep{Miller:1982}, in which participants have to respond as quickly as possible to a signal presented on one of two channels (auditory or visual), or on both channels simultaneously (\textit{redundant signal condition}). Participants respond faster in the redundant signal condition than in either of the single channel conditions. Miller has argued for \textit{`coactivation models'} of this phenomenon, \textit{`in which signals presented on different channels contribute to a common pool of activation that initiates a response'} rather than \textit{`separate-activation models'} which are equivalent to an unlimited capacity race in which response-related activation associated with each signal remains separate from the other channel's activation, and a response is triggered when one of the two activation pools exceeds a certain threshold.
 
-\citet{DillonEtAl:2019} have recently argued in favor of coactivation of parses in sentence processing. While they did not propose a specific mechanistic model implementing such coactivation, it could be modeled along the lines of a sequential sampling model \citep{RatcliffEtAl:2016} such as the Drift Diffusion Model \citep{Ratcliff:1978} in which the sentence processor accumulates evidence for the existence of a valid parse for the current input. Under the assumption that the rate of evidence accumulation depends on the number of parses or their total probability mass \citep{Levy:2008}, evidence would accumulate at a higher rate in ambiguous sentences compared to their unambiguous counterparts, resulting in an ambiguity advantage.
+
+
+
+\citet{DillonEtAl:2019} have recently argued in favor of coactivation of parses in sentence processing. While they did not propose a specific mechanistic model implementing such coactivation, it could be modeled along the lines of a sequential sampling model such as the Drift Diffusion Model \citep{RatcliffEtAl:2016, Ratcliff:1978} in which the sentence processor accumulates evidence for the existence of a valid parse for the current input. Under the assumption that the rate of evidence accumulation depends on the number of parses or their total probability mass \citep{Levy:2008}, evidence would accumulate at a higher rate in ambiguous sentences compared to their unambiguous counterparts, resulting in an ambiguity advantage.
 
 
 \subsection{Underspecification}
 
 \citet{SwetsEtAl:2008} proposed a radically different explanation for this phenomenon, which is grounded in the Good-Enough approach to sentence comprehension \citep{ChristiansonEtAl:2001, Ferreira:2003}.
 According to their account, the parser underspecifies RC attachment in ambiguous sentences unless task demands require it to commit to a specific reading of the ambiguity. The underlying rationale is that not making any commitment is less costly than committing to one reading and building the corresponding structure.
-\citet{SwetsEtAl:2008} argued that the task demands in the studies attesting an ambiguity advantage \citep{TraxlerEtAl:1998, VanGompelEtAl:2005, VanGompelEtAl:2000, VanGompelEtAl:2001} did not require the disambiguation of RC attachment, because it was never probed in comprehension questions: In those studies, occasional superficial questions were asked to keep participants focused on the task, but questions about RC attachment were never asked to avoid drawing participants' attention to the attachment ambiguity.
-
-Swets et al. argue that under such circumstances, underspecification of RC attachment can be a feasible strategy for reducing processing effort. In consequence, the underspecification account assumes that the parser avoids any unnecessary commitment and avoids attaching the RC in ambiguous sentences in order to save time.
+\citet{SwetsEtAl:2008} argued that the task demands in the studies attesting an ambiguity advantage \citep{TraxlerEtAl:1998, VanGompelEtAl:2005, VanGompelEtAl:2000, VanGompelEtAl:2001} did not require the disambiguation of RC attachment, because it was never probed in comprehension questions. In those studies, occasional superficial questions were asked to keep participants focused on the task, but questions about RC attachment were never asked to avoid drawing participants' attention to the attachment ambiguity.
+%
+Swets et al. argue that under such circumstances, underspecification of RC attachment can be a feasible strategy for reducing processing effort. In consequence, their underspecification 
+account assumes that the parser avoids any unnecessary commitment and avoids attaching the RC in ambiguous sentences in order to save time.
 
 Swets et al. tested this proposal in a self-paced reading experiment with sentences like (\ref{AA.Swets}), in which different groups of participants were asked different types of comprehension questions about the experimental sentences.
 They found an ambiguity advantage when comprehension questions were superficial, but did not find such an effect when participants were always asked about the RC attachment after every sentence.
 They further found an across-the-board slowdown in reading at the relative clause region in the RC questions group, with a larger slowdown in the dispreferred high attachment conditions.
+
 
 \begin{exe}
   \ex \label{AA.Swets} \begin{xlist}
@@ -361,15 +380,17 @@ They further found an across-the-board slowdown in reading at the relative claus
 \end{exe}
 
 
-While this finding demonstrates that \textit{reading} is indeed influenced by task demands, it does not entail that \textit{parsing} depends on task demands, or that readers underspecify: One piece of evidence to that end is a reanalysis of the Swets et al. data by \citet{Vasishth:2021Blog}, which shows that Swets et al.'s key finding, an interaction between question type and the effect of RC attachment is significant only under analysis of raw reading times with an ANOVA: In an ANOVA analysis of log-reading times, or an analysis with linear mixed effects models (raw or log-transformed) the interaction fails to reach significance. 
-This indicates that the Swets et al. data does not provide unambiguous evidence for strategic underspecification if both, by-participants and by-items variance are estimated simultaneously as in linear mixed-effects models \citep{PinheiroBates:2000}.
-Another piece of evidence against underspecification as the only interpretation of Swets et al.'s findings is a computational implementation of the SMCM \citep{LogacevVasishth:2016} which shows that a substantial reduction in the magnitude of the ambiguity advantage in the RC questions condition is expected to the point where it is barely detectable as an artifact of slowed reading in these conditions.
-Thus, while Swets et al.'s findings are incompatible with the URM under specific statistical assumptions, they are compatible with both, the SMCM and the underspecification account.
+While this finding demonstrates that \textit{reading} is indeed influenced by task demands, it does not entail that \textit{parsing} depends on task demands, or that readers underspecify. One piece of evidence to that end is a reanalysis of the Swets et al. data by \citet{Vasishth:2021Blog}, which shows that Swets et al.'s key finding, an interaction between question type and the effect of RC attachment, is significant only
+if untransformed reading times are analyzed with an ANOVA. In an ANOVA analysis of log-reading time, or an analysis with linear mixed effects models (untransformed or log-transformed) the interaction fails to reach significance. 
+This indicates that the Swets et al. data does not provide unambiguous evidence for strategic underspecification if both by-participants and by-items variance are accounted for simultaneously as in linear mixed-effects models \citep{PinheiroBates:2000}.
+Another piece of evidence against underspecification as the only interpretation of Swets et al.'s findings is a computational implementation of the SMCM \citep{LogacevVasishth:2016} which shows that according to the SMCM, a substantial reduction in the magnitude of the ambiguity advantage in the RC questions condition is expected to the point where it is barely detectable as an artifact of slowed reading in these conditions.
+Thus, while Swets et al.'s findings are incompatible with the URM under very specific statistical assumptions, they are compatible with both the SMCM and the underspecification account.
 Importantly, Swets et al.'s proposal allows for multiple mechanisms of underspecification, which will be referred to as \textit{obligatory underspecification} and \textit{selective underspecification} in the following.
+
 
 \subsubsection{Obligatory Underspecification}
 
-One interpretation of the underspecification account is that whenever the parser encounters a relative clause, it immediately underspecifies its attachment when the task demands allow it to do so. The parser's actions according to this account are illustrated in figure \ref{fig:illustrationObligatoryUspec}: When it encounters a relative clause, after carrying out all attachment-unrelated processes, the parser underspecifies RC attachment in all conditions and proceeds to check whether the ambiguity has been disambiguated at every new incoming word. In unambiguous sentences, it ultimately encounters disambiguating material, and then attaches the RC either high or low. Since no such material is encountered in ambiguous conditions, the RC is never attached, which amounts to the omission of an entire processing step. If task demands do not permit underspecification, the parser disambiguates ambiguous RC attachment, either at the end of the RC, or when its core arguments have been processed.
+One interpretation of the underspecification account is that whenever the parser encounters a relative clause, it immediately underspecifies its attachment when the task demands allow it to do so. The parser's actions according to this account are illustrated in figure \ref{fig:illustrationObligatoryUspec}: When it first encounters a relative clause, the parser underspecifies RC attachment in all conditions and proceeds to check whether the ambiguity has been disambiguated at every new incoming word. In unambiguous sentences, it ultimately encounters disambiguating material, and then attaches the RC either high or low. Since no such material is encountered in ambiguous conditions, the RC is never attached, which amounts to the omission of an entire processing step. If task demands do not permit underspecification, the parser disambiguates ambiguous RC attachment, either at the end of the RC, or when its core arguments have been processed.
 
 \begin{figure}
 \centering
@@ -388,7 +409,7 @@ An alternative interpretation of the underspecification mechanism is illustrated
 When the required part of the RC has been processed, the parser checks the number of available attachment sites.
 If only one is available, it builds the appropriate structure (either high or low attachment). If several sites are available, and the task demands permit, the parser creates an underspecified representation. If the task demands do not permit underspecification, the parser disambiguates the RC attachment at this point.
 
-In order to account for the ambiguity advantage, this variant of the underspecification account needs to explicitly stipulate that the underspecification operation requires less time than either high or low attachment. This is in contrast to obligatory underspecification, where such a stipulation is unnecessary as the ambiguity advantage is a direct result of the sequence of the parser's actions.
+In order to account for the ambiguity advantage, this variant of the underspecification account needs to explicitly stipulate that the underspecification operation requires less time than either high or low attachment. This is in contrast to obligatory underspecification, where such a stipulation is unnecessary as the ambiguity advantage is a direct result of the \redx{omission} of the \redx{attachment step}.
 
 \begin{figure}
 \centering
@@ -397,16 +418,20 @@ In order to account for the ambiguity advantage, this variant of the underspecif
 \end{figure}
 
 
+
 \subsubsection{Further accounts of the ambiguity advantage}
 
-A number of other accounts of the ambiguity advantage have been proposed, such as \textit{surprisal} \citep{Hale:2001, Levy:2008}, as well as in \textit{constraint-based models} and \textit{self-organized sentence processing} \citep{GreenMitchell:2006, VosseKempen:2009, Smith:2018} have been proposed. For instance, Levy's independently motivated Surprisal account posits that the average processing difficulty of each word is proportional to the word's surprisal value, that is, to its negative conditional log-probability, given the preceding context. Because in ambiguous sentences like (\ref{AA.Traxler}c), the word \textit{moustache} is compatible with two sentence structures, but with only one in locally ambiguous sentences like (\ref{AA.Traxler}a) and (\ref{AA.Traxler}b), the conditional probability of \textit{moustache}in ambiguous sentences is higher than in unambiguous sentences. Because higher conditional probability corresponds to lower surprisal, the surprisal\ account predicts the shorter reading times in globally ambiguous conditions compared to the locally ambiguous conditions. Meanwhile, the self-organized parsing account accounts for the ambiguity advantage by positing a processing difficulty in unambiguous sentences like (\ref{AA.Traxler}b,c) relative to ambiguous sentences like (\ref{AA.Traxler}a) due to the availability of an infelicitous parse (`the car that had the moustache') in the former, but not in the latter. These models will not be discussed in the following because they make no clear predictions for minimum processing times in the ambiguous conditions relative to its unambiguous counterparts, which is the main focus of the present paper.
+A number of other accounts of the ambiguity advantage have been proposed, such as \textit{surprisal} \citep{Hale:2001, Levy:2008}, as well as in \textit{constraint-based models} and \textit{self-organized sentence processing} \citep{GreenMitchell:2006, VosseKempen:2009, Smith:2018}. For instance, Levy's independently motivated surprisal account posits that the average processing difficulty of each word is proportional to the word's surprisal value, that is, to its negative conditional log-probability, given the preceding context. Because in ambiguous sentences like (\ref{AA.Traxler}c), the word \textit{moustache} is compatible with two sentence structures, but with only one in locally ambiguous sentences like (\ref{AA.Traxler}a) and (\ref{AA.Traxler}b), the conditional probability of \textit{moustache} in ambiguous sentences is higher than in unambiguous sentences. Because higher conditional probability corresponds to lower surprisal, the surprisal\ account predicts shorter reading times in globally ambiguous conditions compared to the locally ambiguous conditions. Meanwhile, the self-organized parsing account accounts for the ambiguity advantage by positing a processing difficulty in unambiguous sentences like (\ref{AA.Traxler}b,c) relative to ambiguous sentences like (\ref{AA.Traxler}a) due to the availability of an infelicitous parse (`the car that had the moustache') in the former, but not in the latter. These models will not be discussed in the following because they make no clear predictions for minimum processing time in ambiguous sentences relative to their unambiguous counterparts, which is the main focus of the present paper.
 
 \section{Distinguishing between race models and underspecification}
 
-\citet{vonderMalsburgVasishth:2013} present further evidence consistent with Swets et al.'s (2008) underspecification account under certain assumptions. They conducted an eye-tracking experiment in which they compared locally ambiguous and unambiguous Spanish sentences involving adverbial clause attachment. One of their key findings was that readers with low working memory capacity read the ambiguous region of locally ambiguous sentences faster than the corresponding region of their unambiguous counterparts. No such difference was observed for high-capacity readers.
+Von der Malsburg and Vasishth (\citeyear{vonderMalsburgVasishth:2013})
+present further evidence consistent with Swets et al.'s (2008) underspecification account under certain assumptions. They conducted an eye-tracking experiment in which they compared locally ambiguous and unambiguous Spanish sentences involving adverbial clause attachment. One of their key findings was that readers with low working memory capacity read the ambiguous region of locally ambiguous sentences faster than the corresponding region of their unambiguous counterparts. No such difference was observed for high-capacity readers.
 
-These findings are compatible with the underspecification account under the assumption that in addition to being subject to task demands, underspecification tends to be a more common strategy among low-capacity readers than high-capacity readers because underspecified attachment saves memory resources. According to this account, low capacity readers underspecify ambiguous sentences more often than high-capacity readers do, in order to save memory resources, and as a side-effect, also save time, which surfaces as an ambiguity advantage. Von der Malsburg and Vasishth further observed that in locally ambiguous conditions, trials with relatively long first-pass reading times on the ambiguous region were associated with a higher rate of re-reading in the high-attachment conditions than in the low-attachment conditions. This finding is compatible with an underspecification-based account under the assumption that relatively short first-pass reading times at the ambiguous region are indicative of underspecification, while re-reading is indicative of reanalysis.
-While von der Malsburg and Vasishth's account of their findings is highly plausible, it isn't entirely compelling because their conclusions are based on the results of exploratory data analysis, and thus the assumptions linking the use of underspecification to working-memory capacity remain to be verified.
+These findings are compatible with the underspecification account under the assumption that in addition to being subject to task demands, underspecification tends to be a more common strategy among low-capacity readers than high-capacity readers because underspecified attachment saves memory resources. According to this account, low capacity readers underspecify ambiguous sentences more often than high-capacity readers do, in order to save memory resources, and as a side-effect, also save time, which surfaces as an ambiguity advantage. Von der Malsburg and Vasishth further observed that in locally ambiguous conditions, trials with relatively long first-pass reading times in the ambiguous region were associated with a higher rate of re-reading in the high-attachment conditions than in the low-attachment conditions. This finding is compatible with an underspecification-based account under the assumption that relatively short first-pass reading times at the ambiguous region are indicative of underspecification, while re-reading is indicative of reanalysis.
+While von der Malsburg and Vasishth's account of their findings is highly plausible, it isn't entirely compelling because 
+%their conclusions are based on the results of exploratory data analysis, and thus 
+the assumptions linking the use of underspecification to working-memory capacity remain to be verified.
 
 More recently, \citet{DillonEtAl:2019} found an ambiguity advantage in a speeded acceptability experiment with sentences like (\ref{AA.Dillon}). Ambiguous sentences like (\ref{AA.Dillon}c) were judged acceptable more often than their locally ambiguous counterparts in (\ref{AA.Dillon}a,b). According to Dillon and colleagues, both parallel and serial theories of parsing can in principle account for the ambiguity advantage in accuracy.
 They assume a linking hypothesis based on \textit{Signal Detection Theory} \citep{Wickens:2002} according to which sentence acceptability is underlyingly continuous and is converted into discrete acceptability judgments based on its magnitude relative to a certain threshold  \citep[e.g.,][]{BaderHaussler:2010, DillonWagers:2019}.
@@ -415,6 +440,7 @@ In consequence, this account predicts higher compound acceptability scores for a
 
 
 Dillon et al. discuss that serial models can also explain the ambiguity advantage in acceptability judgments under the assumption that initially misanalyzed grammatical locally ambiguous sentences, at least sometimes, do not trigger reanalysis and are thus misclassified as ungrammatical. Ambiguous sentences, however, never require reanalysis, which is why no misclassification occurs. This leads to a higher percentage of `acceptable' responses to ambiguous sentences. The class of serial models that make this prediction include race models such as the URM, but not the SMCM.
+
 
 
 \begin{exe}
@@ -434,39 +460,43 @@ Dillon et al. discuss that serial models can also explain the ambiguity advantag
   \end{xlist}
 \end{exe}
 
-Using a signal detection theory approach \cite{Wickens:2002}, Dillon and colleagues tested a key prediction of serial models like the URM, which is that the distribution of underlying continuous acceptability scores in locally ambiguous conditions should be a mixture distribution. One component of this mixture should be the distribution of acceptability scores for acceptable sentences, as on those occasions, the parser chose the correct structure at the outset, or reanalyzed after an initial misparse. The second component should be the distribution of acceptability scores for unacceptable sentences, as on those occasions the parser chose the structure that later turns out to be incorrect.
+Using a signal detection theory approach, Dillon and colleagues tested a key prediction of serial models like the URM, which is that the distribution of underlying continuous acceptability scores in locally ambiguous conditions should be a mixture distribution. One component of this mixture should be the distribution of acceptability scores for acceptable sentences, as on those occasions, the parser chose the correct structure at the outset, or reanalyzed after an initial misparse. The second component should be the distribution of acceptability scores for unacceptable sentences, as on those occasions the parser chose the structure that later turns out to be incorrect.
 
 Dillon et al. argue that the variance of the presumably bimodal mixture distribution predicted by serial models for locally ambiguous sentences should be substantially larger than the variance in the ambiguous condition, and that this difference in variance should show up as a difference in the shape of the \emph{receiver operating characteristic functions} \cite[ROC;][]{Wickens:2002} between experimental conditions.
 They find no evidence for a larger variance of the underlying continuous acceptability values in locally ambiguous conditions.
-They further assessed the quantitative fit of both, the parallel model and the URM-like serial model to their speeded acceptability data, and found that the parallel model substantially outperformed the URM-like model.
+They further assessed the quantitative fit of both the parallel model and the URM-like serial model to their speeded acceptability data, and found that the parallel model substantially outperformed the URM-like model.
 
-Dillon et al.'s findings provide tentative evidence against URM-like serial models and in favor of parallel representation of ambiguous structures, such proposed by surprisal and possibly by the underspecification account, but it is also compatible with some serial models, such as the SMCM: While the URM predicts that the underlying acceptability scores follow a simple mixture distribution, the SMCM makes a different prediction: Under the assumption that that more acceptable structures are also faster to construct \citep[e.g.,][]{RaynerEtAl:2004, VanGompelEtAl:2000} the SMCM predicts that the acceptability score of an ambiguous sentence should be the maximum of the acceptability scores of the two underlying possible structures. It is currently not clear how a computational implementation of this model would fare on Dillon et al.'s data compared to the two models they considered, and if their dataset has the potential to clearly adjudicate between these models. However, it appears that their findings are in principle compatible with some serial models, such as the SMCM.
+Dillon et al.'s findings provide tentative evidence against URM-like serial models and in favor of parallel representation of ambiguous structures, such proposed by surprisal and possibly by the underspecification account, but it is also compatible with some serial models, such as the SMCM: While the URM predicts that the underlying acceptability scores follow a simple mixture distribution, the SMCM makes a different prediction. Under the assumption that that more acceptable structures are also faster to construct \citep[e.g.,][]{RaynerEtAl:2004, VanGompelEtAl:2000} the SMCM predicts that the acceptability score of an ambiguous sentence should be the maximum of the acceptability scores of its two possible structures, \redx{rather than a weighted average}. It is currently not clear how a computational implementation of this model would fare on Dillon et al.'s data compared to the two models they considered, and if their dataset has the potential to clearly adjudicate between these models. However, it appears that their findings are in principle compatible with some serial models, such as the SMCM.
 
 Importantly, the finding of an ambiguity advantage in a speeded acceptability judgment task appears to be at odds with the \textit{obligatory underspecification account }(fig.~\ref{fig:illustrationObligatoryUspec}). This is because obligatory underspecification assumes that underspecified representations become available at the same point in time in all conditions. As informed acceptability judgments in ambiguous conditions must be based on underspecified representations according to this model, this should also be possible in unambiguous conditions. Because participants were not asked any comprehension questions in Dillon et al.'s experiment, the optimal strategy would be not to perform any attachment in unambiguous conditions. Assuming that underspecification is indeed strategic, as argued by \citet{SwetsEtAl:2008}, the parser should arguably be able to avoid carrying out RC attachment in unambiguous conditions as it does in ambiguous conditions. As a result, reaction times and accuracy for all attachment conditions should be equal, which is not the case in the Dillon et al. experiment. Thus, Dillon et al.'s finding provides evidence against the obligatory underspecification account. 
 
-This logic does not apply to the \textit{selective underspecification model}(fig.~\ref{fig:illustrationSelectiveUspec}). Because an underspecified representation is not created in all conditions, and because it is produced by a specialized operation which is presumably only available under the right kind of task demands, and only if the sentence has been deemed ambiguous, the processing effort in unambiguous conditions cannot be reduced by simply underspecifying unambiguous conditions as well.
-There are multiple ways in which the selective underspecification can account for the ambiguity advantage in response accuracy in Dillon et al.'s data: One possibility is that because participants were required to respond within 2 seconds, they determined in advance after how much time to respond on any given trial. If the sentence had not been processed before the self-set deadline, participants pressed a random button. Because ambiguous sentences are assumed to be processed faster, it was more likely that they would complete processing an ambiguous sentence before the deadline than an unambiguous sentence.
-A second way to explain this effect is via the additional assumption that the underspecification process is not only shorter but also less susceptible to failure than either of the attachment processes.
+This logic does not apply to the \textit{selective underspecification model} (fig.~\ref{fig:illustrationSelectiveUspec}). Because an underspecified representation is not created in all conditions, and because it is produced by a specialized operation which is presumably only available under the right kind of task demands, and only if the sentence has been deemed ambiguous, the processing effort in unambiguous conditions cannot be reduced by simply underspecifying unambiguous conditions as well.
+There are multiple ways in which the selective underspecification can account for the ambiguity advantage in response accuracy in Dillon et al.'s data. One possibility is that because participants were required to respond within 2 seconds, they determined in advance after how much time to respond on any given trial. If the sentence had not been processed before the self-set deadline, participants pressed a random button. Because ambiguous sentences were processed faster, it was more likely that they would be processed before the deadline than unambiguous sentences.
+A second way to explain this effect is through the additional stipulation that the underspecification process is not only shorter but also less susceptible to failure than either of the attachment processes.
 
 
-The magnitude of the ambiguity advantage in acceptability judgements is of particular importance in distinguishing between underspecification- and race-based models of ambiguity resolution: Dillon et al. found that sentences in their experiment were judged as acceptable $74\%$ of the time in ambiguous attachment conditions, but only $60\%$ and $41\%$ of the time in unambiguous low- and high-attachment conditions respectively.
+
+The magnitude of the ambiguity advantage in acceptability judgements is of particular importance in distinguishing between underspecification- and race-based models of ambiguity resolution. Dillon et al. found that sentences in their experiment were judged as acceptable $74\%$ of the time in ambiguous attachment conditions, but only $60\%$ and $41\%$ of the time in unambiguous low- and high-attachment conditions respectively.
 The SMCM can explain this effect under the assumption that each attachment process (high and low) has a particular probability of being successfully carried out (\(P_{H}\) and \(P_{L}\), respectively), and that a failure to successfully attach the RC results in an incorrect \emph{ungrammatical} response in the judgment task.
 Under the assumption that the two attachment processes are independent, the \emph{success probability} in the ambiguous condition should correspond to the probability that at least one attachment process is successfully carried out, i.e., \(P_{H} + P_{L} - P_{H}\cdot P_{L}\).
 Using the observed accuracy rates of $60\%$ and $41\%$ as estimates of the success probability of the low- and high-attachment processes, respectively, the expected accuracy rate in the ambiguous conditions is $0.6 + 0.41 - 0.6 \cdot 0.41 = 0.764$, i.e., $76.4\%$, which is quite close to the observed accuracy rate of $74\%$. 
-
-Both mechanisms predict a higher accuracy rate in the ambiguous condition, but make no quantitative predictions without further assumptions. Thus, while this finding is compatible with the underspecification account, it is \textit{expected} under the SMCM.
+%
+Both mechanisms predict a higher accuracy rate in the ambiguous condition, but underspecification makes no quantitative predictions without further assumptions. Thus, while this finding is compatible with the underspecification account, it is \textit{expected} under the SMCM.
 
 %to-do: use this in the letter
 %Because a theory of sentence processing needs to explain the ambiguity advantage in (i) reading %times and reaction times, as well in (ii) acceptability judgments, as found by @DillonEtAl:%2019.  
 
-Importantly, all findings based on average RTs are compatible with multiple accounts, which complicates the identification of the mechanism underlying the ambiguity advantage. However, several accounts differ in their predictions regarding the relative shapes of the completion time distributions of attachment in ambiguous and unambiguous conditions. In the following, an experiment using the \textit{speed-accuracy tradeoff paradigm} \citep{Dosher:1976} will be presented, which tests the fine-grained predictions of the above-mentioned models regarding timing and accuracy. To anticipate the key finding: The results of the experiment show that ambiguous sentences are associated with shorter \textit{minimum processing times} than either of the ambiguous conditions and thus provides evidence for the selective underspecification account.
+Importantly, all findings based on average RTs are compatible with multiple accounts, which complicates the identification of the mechanism underlying the ambiguity advantage. However, several accounts differ in their predictions regarding the relative shapes of the completion time distributions of attachment in ambiguous and unambiguous conditions. In the following, an experiment using the \textit{speed-accuracy tradeoff paradigm} \citep{Dosher:1976} will be presented, which tests the fine-grained predictions of the above-mentioned models regarding timing and accuracy. 
+
+To anticipate the key finding: The results of the experiment show that ambiguous sentences are associated with shorter \textit{minimum processing times} than either of the unambiguous conditions, \redx{which is compatible with the co-activation and the selective underspecification account, but not compatible with any of the race models discussed above}.
+%for the selective underspecification account.
 %\todo{mention that we can't look at RT distributions because they are contaminated (Gondan, etc.)}
 
 \section{Speed-Accuracy Tradeoff Methodology}
 
 It has been known since at least \citet{Pachella:1973}, that many cognitive tasks can be performed more accurately at the cost of lower speed, or faster at the expense of accuracy. Figure \ref{fig:illustrationSATF} illustrates a typical \textit{speed-accuracy tradeoff function (SATF) }for simple cognitive tasks which describes this tradeoff. During an initial period, participants' performance is at chance level as this interval corresponds to the \textit{minimum amount of time }required to process the stimulus to the required degree to perform the task. As more time is spent on the task, the likelihood that the relevant cognitive process is completed increases, and as a result so does accuracy, albeit typically with a negative acceleration, approaching the participant's \textit{asymptotic accuracy} on that task \citep{Dosher:1976}.
 
-In sentence processing experiments, SATFs for specific processes involved in the processing of a particular type of structure can be obtained using the \textit{response-signal paradigm}: Participants are asked to judge the acceptability of a sentence after different amounts of time \citep[e.g.,][]{McElree:1993}.
+In sentence processing experiments, SATFs for specific processes involved in the processing of a particular type of structure can be obtained using the \textit{response-signal paradigm}. In it, participants are asked to judge the acceptability of a sentence after different amounts of time \citep[e.g.,][]{McElree:1993}.
 In computing the SATF, participants' performance at every time lag is quantified by the \textit{Signal Detection Theory} sensitivity measure $d'$ \citep{LiuSmith:2009, Wickens:2002}, which, unlike the percentage of accurate responses, is unaffected by participants' response bias towards either response.
 %It is computed as the difference between the z-scores of the proportions of \emph{hits} and \emph{false alarms}, where an \emph{acceptable} response to an acceptable sentence is considered a hit, and an \emph{acceptable} response to an unacceptable sentence is considered a false alarm.
 To the extent that distinguishing between acceptable and unacceptable sentences requires a particular cognitive process, such as the retrieval of a particular element from memory, or resolving a syntactic dependency between a head and a dependent, the SATF will reflect the operation of that process. Slowed processing in one condition compared to another will be reflected either in a difference between intercepts, or in a difference between rates of the two SATFs, as illustrated in figure \ref{fig:illustrationSATTrial} (middle and right panel). Meanwhile, differences in the probability of successfully carrying out processes required to perform the main task will surface as a difference in asymptotic accuracy, as illustrated in figure \ref{fig:illustrationSATTrial} (left panel).
@@ -499,6 +529,8 @@ The asymptote parameter $\lambda$ corresponds to the maximally attainable accura
 d'(t) = \lambda\cdot \left(1-e^{-\beta\cdot \left(t-\delta \right)} \right),\text{~for~}t \geq \delta\text{;}~0~\text{otherwise}
 \label{eq:eqSATF}
 \end{equation}
+
+
 
 \section{SAT and Relative Clause Attachment }
 
@@ -540,6 +572,7 @@ While the models make the same predictions for simple reading times and reaction
 %todo: We will discuss their predictions in terms of the \emph{cumulative density functions} (CDF) of their completion time distributions, i.e., the probabilities that the stimulus has been successfully processed at any given time.
 %todo: Because of the close relationship between CDFs and SATFs, predictions about the differences in CDFs translate into predictions about differences in intercept, rate or asymtote.
 
+
 \subsection{Underspecification}
 
 The \textit{selective underspecification} model in figure \ref{fig:illustrationSelectiveUspec} assumes that under the right task demands, the parser unambiguously attaches RCs when their attachment is unambiguous, and avoids doing so when it is ambiguous. An acceptability judgment task arguably constitutes such a situation, since what is at issue is whether the sentence has a syntactically licensed structure, and not \textit{which} structure is correct. 
@@ -550,7 +583,7 @@ While selective underspecification predicts a higher response accuracy in the am
 
 % todo/to-do: Mention somewhere that there isn't actually a clear relationship between the term "underspecified" and actual work on underspecification in computational linguistics here.
 
-The predictions of the \textit{obligatory underspecification} for the German sentences in (\ref{BriefEx.Exp1}) are less clear because in contrast to sentence like (\ref{AA.Traxler}b,c), the unambiguous sentences (\ref{BriefEx.Exp1}a,b) are disambiguated at the first word of the relative clause: While the parser can underspecify ambiguous sentences, it cannot do so with unambiguous sentences under the assumptions of obligatory underspecification because they are disambiguated immediately by means of relative pronoun morphology. Because obligatory underspecification makes no assumptions about the relative durations of underspecification and full attachment, but only about their order, it is in principle compatible with any result.
+The predictions of the \textit{obligatory underspecification} for the German sentences in (\ref{BriefEx.Exp1}) are less clear because in contrast to sentences like (\ref{AA.Traxler}b,c), the unambiguous sentences (\ref{BriefEx.Exp1}a,b) are disambiguated at the first word of the relative clause. While the parser can underspecify ambiguous sentences, it cannot do so with unambiguous sentences under the assumptions of obligatory underspecification because they are disambiguated immediately by means of relative pronoun morphology. Because obligatory underspecification makes no assumptions about the relative durations of underspecification and full attachment, but only about their order, it is in principle compatible with any result.
 
 \subsection{Unlimited-Capacity Race}
 
@@ -559,7 +592,7 @@ While only high attachment can be performed in high attachment sentences, and on
 Since the parser adopts the structure which is computed the fastest, relatively fast RC attachment will occur more frequently in ambiguous sentences than in their unambiguous counterparts.
 More specifically, the probability of having successfully processed the RC attachment in the ambiguous condition ($F_{A}$) at any given time $t$ equals the probability that either the low attachment or the high attachment process has been successfully completed ($F_{H}$ and $F_{L}$, respectively), as in equation \ref{eq:eq1SMCM}.
 
-Figure \ref{fig:predictionsSMCM} exemplifies the resulting predictions for the distribution of RC attachment completion times in the ambiguous condition under the assumption that both RC attachment processes are approximately equally fast. It illustrates the predicted relationship between ambiguous and unambiguous attachment conditions: As long as the probability of having completed either attachment is at zero, the probability of successfully completing the race is also at zero. $F_{A}$ departs from zero at the point in time when either $F_{L}$ or $F_{H}$ do. As both, $F_{L}$ and $F_{H}$ increase, $F_{A}$ increases as well, albeit faster than either of the other completion time distributions, in accordance with equation \ref{eq:eq1SMCM}.
+Figure \ref{fig:predictionsSMCM} exemplifies the resulting predictions for the distribution of RC attachment completion times in the ambiguous condition under the assumption that both RC attachment processes are approximately equally fast. It illustrates the predicted relationship between ambiguous and unambiguous attachment conditions: As long as the probability of having completed either attachment is at zero, the probability of successfully completing the race is also at zero. $F_{A}$ departs from zero at the point in time when either $F_{L}$ or $F_{H}$ do. As both $F_{L}$ and $F_{H}$ increase, $F_{A}$ increases as well, albeit faster than either of the other completion time distributions, in accordance with equation \ref{eq:eq1SMCM}.
 
 \begin{equation}
 F_{A}(t) = F_{H}(t) + F_{L}(t) - F_{H}(t) \cdot F_{L}(t)
@@ -574,11 +607,11 @@ F_{A}(t) = F_{H}(t) + F_{L}(t) - F_{H}(t) \cdot F_{L}(t)
 
 
 For example, when the probability of a successful attachment being completed in unambiguous sentences is approximately $0.5$, it is $0.75$ in the ambiguous condition.\footnote{ This follows from equation \ref{eq:eq1SMCM}. }
-Because the fastest attachment times in the unambiguous conditions are also the fastest completion times in the ambiguous conditions, race models predict that the intercept of the SATF of the ambiguous condition should not differ from the intercept of the faster of the two intercepts of the unambiguous conditions. It is, however, predicted to be processed at a higher rate, which means that $\beta^{-1}$ (as illustrate in fig. \ref{fig:illustrationSATF}) should be lower. It also follows from equation \ref{eq:eq1SMCM} that the asymptotic accuracy should be higher in the ambiguous condition than in its unambiguous counterparts unless both RC attachment processes are infallible and thus have a success probability of 1. 
+Because the fastest attachment times in the unambiguous conditions are also the fastest completion times in the ambiguous conditions, race models predict that the intercept of the SATF of the ambiguous condition should not differ from the intercept of the faster of the two intercepts of the unambiguous conditions. It is, however, predicted to be processed at a higher rate, which means that $\beta^{-1}$ (as illustrated in fig. \ref{fig:illustrationSATF}) should be lower. It also follows from equation \ref{eq:eq1SMCM} that the asymptotic accuracy should be higher in the ambiguous condition than in its unambiguous counterparts unless both RC attachment processes are infallible and thus have a success probability of 1. 
 
 \subsection{Limited-Capacity Race}
 
-Although \citeapos{LewisVasishth:2005} cue-based parsing model is a type of race model \citep{NicenboimVasishth:2018}, the probability of a successful retrieval does not follow equation \ref{eq:eq1SMCM} because retrieval of both possible attachment sites is slowed due to \textit{cue-overload} \citep[e.g.,][]{EngelmannEtAl2019CogSci} in the ambiguous condition: While in unambiguous conditions, a gender match between the relative pronoun and the RC attachment site uniquely identifies it, the retrieval cue \textit{gender} matches two NPs in the the ambiguous condition. 
+Although \citeapos{LewisVasishth:2005} cue-based parsing model is a type of race model \citep{NicenboimVasishth:2018}, the probability of a successful retrieval does not follow equation \ref{eq:eq1SMCM} because retrieval of both possible attachment sites is slowed due to \textit{cue-overload} \citep[e.g.,][]{EngelmannEtAl2019CogSci} in the ambiguous condition. While in unambiguous conditions, a gender match between the relative pronoun and the RC attachment site uniquely identifies it, the retrieval cue \textit{gender} matches two NPs in the the ambiguous condition. 
 The result of this is the decreased uniqueness of the retrieval cue \textit{gender}, which in turn slows the potential retrieval of either attachment site relative to its retrieval in the unambiguous conditions.
 The magnitude of the slowdown of the latent retrieval processes relative to their counterparts in unambiguous conditions depends on several ACT-R parameters, but its consequence is that the probability of having successfully retrieved any of the two potential attachment sites at any given point in time in the ambiguous condition is as in equation \ref{eq:eqLCRace}, where $F'_H$ and $F'_L$ are the distribution functions of the slowed retrieval processes corresponding to high and low attachment.\footnote{ Due to the cue-overload related slowdown, $F_H$ and $F_L$ stochastically dominate $F'_H$ and $F'_L$ respectively, such that $F'_H(t) < F_H(t)$ and $F'_L(t) < F_L(t)$ for all $t$ such that $F_{L/H}(t) > 0$ and $F'_{L/H}(t) < 1$.} This relationship is illustrated in figure \ref{fig:predictionsLCRace}, where $F'_H$ and $F'_L$ are represented by dotted lines.
 
@@ -685,10 +718,20 @@ Twenty students from the University of Potsdam in the age range from 18 to 36 ye
 
 \subsubsection{Procedure}
 
-To measure participants' change in response accuracy over time in different attachment conditions, we used the \emph{multiple-response SAT procedure} \citep[MR-SAT; e.g.,][]{McElree:1993, FranckWagers:2020, KushEtAl:2019a, ForakerEtAl:2018, ForakerMcElree:2007, MartinMcElree:2011, MartinMcElree:2009, MartinMcElree:2008, McElree:1993, VanDykeMcElree:2011, WickelgrenEtAl:1980}.
+To measure participants' change in response accuracy over time in different attachment conditions, we used the \emph{multiple-response SAT procedure} \citep[MR-SAT; e.g.,][]{FranckWagers:2020, ForakerEtAl:2018, ForakerMcElree:2007, MartinMcElree:2011, MartinMcElree:2009, MartinMcElree:2008, McElree:1993, VanDykeMcElree:2011, WickelgrenEtAl:1980, Dillon:2011, KushEtAl:2019a}.
+% SchneiderAnderson:2012, 
+
 On each trial, a sentence was presented phrase by phrase in the center of the screen, as illustrated in figure \ref{fig:illustrationSATTrial}.
 Each phrase was presented for $400\,ms$, with an ISI of $50\,ms$.
-$600\,ms$ before the onset of the last phase, comprising the entire relative clause, a series of fourteen $500\,Hz$ tones started, with an SOA of $400\,ms$ between tones. Each tone served as a cue for the participant to classify the sentence as acceptable or unacceptable by means of pressing a button on a game-pad. Participants were told that they did not need to (but were free to) respond to the first tone, as its main purpose was to serve as a preparatory cue. However, they were requested to respond to all tones following it. The last tone sounded at $4.6$ seconds after the onset of the last phrase.
+A series of fourteen $500\,Hz$ tones, with an SOA of $400\,ms$ between tones started $600\,ms$ before the onset of the last phase, comprising the entire relative clause. Each tone served as a cue for the participant to classify the sentence as acceptable or unacceptable by means of pressing a button on a game-pad. 
+%
+Participants were told that they did not need to (but were free to) respond to the first tone, as its main purpose was to serve as a preparatory cue. However, they were requested to respond to all tones following it.
+%
+\redx{This is because early response cues in a sequence tend to be associated with an increased probability of missed responses and thus with less data for that time interval. To avoid substantial numbers of missed responses at short SOAs, our participants received two response cues before the onset of the RC (SOAs $-0.6\,sec$ and $-0.2\,sec$) \redx{in order to minimize the number of missing responses after the onset of the RC}.
+%
+Thus, the fist tone sounded $0.5\,sec$ before the presentation of the last phrase, while the last tone sounded at $4.6\,sec$ seconds thereafter.
+}
+
 One half of the participants was requested to press the right button with the index finger of their right hand to indicate the answer `acceptable' while the other half were requested to press this button to indicate the answer `unacceptable.'
 
 Before taking part in the experiment, participants practiced the task.
@@ -705,7 +748,7 @@ Participants were encouraged to take breaks between two blocks whenever they fel
 \begin{figure}
 \centering
 \includegraphics[width=0.5\columnwidth]{../figures/ext_figures/SATIllustration.pdf}
-\caption{\label{fig:illustrationSATTrial}The structure of a SAT-trial in experiment 1. Sentences were presented phrase by phrase with an SOA of $450\,ms$. Response signals began $600\,ms$ before the onset of last phrase (the relative clause).}
+\caption{\label{fig:illustrationSATTrial}The structure of a SAT-trial in experiment 1. Sentences were presented phrase by phrase with an SOA of $450\,ms$. Response signals began $600\,ms$ before the onset of the last phrase (the relative clause).}
 \end{figure}
 
 
@@ -762,22 +805,75 @@ In order to prevent participants from trying to detect and anticipate patterns i
 Given this set of constraints, we maximized the distance between repetitions of lexical material.
 We created one randomized list which half the participants saw in its regular order, while the other half saw it in the reverse order.
 
-\subsection{Data Analysis}
+\subsection{Data Availability}
+All data and code used in the data analysis is available at \url{https://osf.io/z8tv9/}.
 
-All data pre-processing and plotting was carried out in \emph{R} R \citep{R} using the packages \emph{tidyverse} and \emph{ggplot2} \citep{tidyverse}.
-Statistical modeling was carried out using the packages \emph{brms} \citep{brms} and \emph{rstan} \citep{rstan} to fit a hierarchical nonlinear model with by-participant random effects. 
+\subsection{Data Preprocessing}
 
-Two participants' data was excluded from further analysis, because they failed to consistently failed to correctly classify the low attachment condition as acceptable. Even at the latest lag, they judged low attachment sentences as acceptable on only $9\%$ and $11\%$ of the trials, respectively. All remaining participants judged all grammatical conditions as acceptable in at least $40\%$ of the cases.
+\redx{
+All data pre-processing and plotting was carried out in \emph{R} \citep{R} using the packages \emph{tidyverse} and \emph{ggplot2} \citep{tidyverse}.
+%
+Two participants' data was excluded from further analysis, because they failed to consistently classify the low attachment condition as acceptable. Even at the latest lag, they judged low attachment sentences as acceptable on only $9\%$ and $11\%$ of the trials, respectively. All remaining participants judged all grammatical conditions as acceptable in at least $40\%$ of the cases.
+}
 
-%\todo{data aggregation, how interval boundaries were calculated, etc.}
+\redx{
+Exploratory data analysis showed substantial variation in the response times following the response signal, with systematic differences between participants and between lags. It also showed that some participants tended to respond multiple times per lag, suggesting that they may have attempted to repeatedly press the response button as quickly as possible rather than responding to the response signals. In order to ensure that each response signal corresponded to no more than one response, even if that response partially overlapped with the following response signal, we modelled the distribution of response times for each participants at each lag as a Gaussian with parameters to be estimated from the data using the \cite{NelderMead:1965} numerical optimization algorithm.
+We used the resulting estimates to (i) re-bin the responses, and (ii) remove excess responses in each bin by keeping only those that were the closest to the average latency at that lag. Importantly,
+while only one response per bin was kept for the purposes of both plotting and statistical analysis, the association of responses with bins affected only the way in which $d'$  was calculated for the purpose of plotting, and did not affect our statistical analysis, as it was conducted on individual responses and their respective response times.
+}
 
-As is common in the SAT literature, the sensitivity \(d'\) was assumed to be a function of time with the form specified in equation \ref{eq:eqSATF} (repeated as \ref{eq:satf.repeated}).
-Here, \(\lambda\) is the asymptotic sensitivity (in \(d'\) units), \(\delta\) is the intercept of the SAT function (i.e., the time at which the sensitivity begins increasing) in seconds, and \(\beta\) is the rate of increase, which has a convenient interpretation as $\beta^{-1}$ (in seconds) as the amount of time the SAT function requires to reach approximately \(63\%\) of the asymptote.
+
+\subsection{Statistical Analysis}
+
+\redx{
+In order to correct for possible response bias towards \textit{`acceptable'} or \textit{`unacceptable'} responses, SAT data is typically analyzed through the lens of Signal Detection Theory (SDT) \citep[e.g.,][]{Wickens:2002}. The key assumption of SDT when applied to acceptability judgements is that sentence acceptability is underlyingly continuous and that the acceptability of ungrammatical and grammatical sentences each follow a Gaussian distribution, with the distance between the means of the two distributions being equal to the \textit{sensitivity} $d'$. When the perceived acceptability of a particular sentence falls below a \textit{response criterion} $c$, the participant responds \textit{`unacceptable'}. When it is above $c$, they respond \textit{`acceptable'}. Because the \textit{sensitivity} $d'$ does not depend on the response criterion, it functions as a bias-free measure of response accuracy, and can be calculated from the percentages of responses corresponding to \textit{false alarms} and \textit{hits} following equation \ref{eq:dprime.est}, where  $z$ is the inverse Gaussian distribution function.
+}
+
+\begin{equation}
+    d' = z(p_\text{hits}) - z(p_\text{false alarms})
+\label{eq:dprime.est}
+\end{equation}
+
+\redx{
+The analysis of data from SAT experiments typically involves model selection based on the \textit{goodness-of-fit} of several models which are fit to each participant's data separately  \citep[e.g.,][]{McElreeDosher:1989, ForakerEtAl:2018}. More specifically, $d'$ is calculated for each participant in each experimental condition at each response lag, a range of models of varying complexity is fitted to each participant's data and the most parsimonious model for the entire dataset is selected on the basis of the results of by-participant fits.
+%
+One problematic aspect of this method is that the uncertainty in the by-subject $d'$ estimates at each lag is not taken into account. This is of particular importance because the sampling variability of $d'$ generally increases with increasing accuracy, which means that data points closer to the asymptote tend to be associated with higher uncertainty than those in the earlier parts of the SAT function \citep[e.g.,][]{LiuSmith:2009}.
+The problem is exacerbated by the fact that there are typically disproportionately many near-asymptotic data points, which are likely to be correlated in MR-SAT experiments. In consequence, the model-comparison metric \textit{adjusted $R^2$} which is typically used in the analysis of SAT data places an undue emphasis on the part of the SATF with the highest sampling variability. The result is high variability of by-subject parameter estimates and thus relatively low statistical power even for modest effect sizes \citep{LogacevBozkurt:2021, PankratzEtAl:2021}.
+}
+
+\redx{
+Hierarchical models \citep{GelmanHill:2006} with the participants' responses
+% (\textit{`acceptable'}/\textit{`unacceptable'}) 
+as a dependent variable 
+%and a \textit{probit} link function 
+can be used to estimate the the \textit{sensitivity} $d'$ and the \textit{response criterion} $c$ \citep[e.g.,][]{DeCarlo:1998, WrightLondon:2009} while avoiding most of the above problems.
+%
+This is because participant-level uncertainty is taken into account in the estimation of population-level effects. As a result of \textit{partial pooling}, participant-level estimates associated with a high degree of uncertainty are shrunk towards the population mean. In consequence, population-level estimates with lower degrees of uncertainty exert the strongest influence on the population-level estimates.
+}
+
+\redx{
+In order to obtain more robust estimates of the parameters of interest, the experimental data was analyzed using a Bayesian hierarchical non-linear model with by-participant random effects implemented using the packages \emph{brms} \citep{brms} and \emph{rstan} \citep{rstan}. The model assumed that the probability of an \textit{`acceptable'} response at time $t$ followed equation \ref{eq:satf.pyes}, where $d'_t$ and $c_t$ are the \textit{sensitivity} and \textit{response criterion} at time $t$, and $\Psi$ is the Gaussian distribution function. The time of each response was determined relative to the presentation of the last phrase on the screen.
+Responses were not binned for the purposes of the statistical analysis. 
+}
+
+\begin{equation}
+    P( R_t = \text{`acceptable'} ) = 
+\begin{cases}
+    1 - \Psi( c_{t} - d'_{t} ),  & \text{in grammatical conditions} \\
+    1- \Psi( c_{t} ),     & \text{in ungrammatical conditions}
+\end{cases}
+\label{eq:satf.pyes}
+\end{equation}
+
+As is common in the SAT literature, the sensitivity \(d'\) at time $t$ was assumed to be a negatively accelerated shifted exponential function, as in equation \ref{eq:eqSATF} (repeated as \ref{eq:satf.repeated}).
+Here, \(\lambda\) is the asymptotic sensitivity (in \(d'\) units), \(\delta\) is the intercept of the SAT function in seconds (i.e., the time at which the sensitivity departs from zero), and \(\beta\) is the rate of increase, which has a convenient interpretation as $\beta^{-1}$ (in seconds) as the amount of time the SAT function requires to reach approximately \(63\%\) of the asymptote.
 
 \begin{equation}
 \label{eq:satf.repeated}
-d'(t) = \lambda\cdot \left(1-e^{-\beta \left(t-\delta \right)} \right),\text{~for~}t \geq \delta\text{;}~0~\text{otherwise}
+d'_{t} = \lambda\cdot \left(1-e^{-\beta \left(t-\delta \right)} \right),\text{~for~}t \geq \delta\text{;}~0~\text{otherwise}
 \end{equation}
+
+
 
 The response criterion was also assumed to be a function of time, following equation \ref{eq:satf.criterion}.
 Here, \(\lambda_{c_L}\) is the initial response criterion, and \(\lambda_{c_R}\) is the right asymptote of the response criterion function.
@@ -785,7 +881,7 @@ Here, \(\lambda_{c_L}\) is the initial response criterion, and \(\lambda_{c_R}\)
 Finally, \(\delta_c\) is the intercept of the response criterion function, and indicates the time at which the response criterion first departs from \(\lambda_{c_L}\).
 
 \begin{equation}
-    c(t) = 
+    c_t = 
 \begin{cases}
     \lambda_{c_L} + (\lambda_{c_R}-\lambda_{c_L}) \cdot (1 - e^{-\beta_c  (t - \delta_c)} ),& \text{~for~}t \geq \delta_c\\
     \lambda_{c_L},              & \text{otherwise}
@@ -793,33 +889,37 @@ Finally, \(\delta_c\) is the intercept of the response criterion function, and i
 \label{eq:satf.criterion}
 \end{equation}
 
-A hierarchical Bayesian non-linear model was fit to participant's raw responses with the following orthogonal contrasts for all three parameters of the \(d'\) function: (i) relative pronoun gender (\textit{masculine$-$feminine}), (ii) RC attachment (\textit{high attachment $-$  average }and \textit{low attachment $-$  average}), and (iii) the interactions between the previous two.\footnote{ In the model, the effect of RC attachment was represented using sum contrasts (high attachment - average and low attachment - average), and was later re-coded to the equivalent of sliding differences contrasts (high attachment - ambiguous and ambiguous - low attachment) with the latter contrast inverted to low attachment - ambiguous for better interpretability of the coefficient estimates.}
-The only contrasts specified for the response criterion was relative pronoun gender. We used the maximal by-subject random effect structure for all model parameters 
+The model was fitted with the following orthogonal contrasts for all three parameters of the \(d'\) function: (i) relative pronoun gender (\textit{masculine$-$feminine}), (ii) RC attachment (\textit{high attachment $-$  average }and \textit{low attachment $-$  average}), and (iii) the interactions between the previous two.\footnote{ In the model, the effect of RC attachment was represented using sum contrasts (high attachment - average and low attachment - average), and was later re-coded to the equivalent of sliding differences contrasts (high attachment - ambiguous and ambiguous - low attachment) with the latter contrast inverted to low attachment - ambiguous for better interpretability of the coefficient estimates.}
+The only contrast specified for the response criterion was relative pronoun gender. We used the maximal by-subject random effect structure for all model parameters 
 ($\lambda, \beta^{-1}, \delta, \lambda_{C_L}, \lambda_{C_R}, \beta_C^{-1}, \delta_C$), including correlations between all coefficients within each SATF parameter. The priors and parameter transformations that were used in the model are specified in table \ref{tab:priors}.
 
 
+
 \begin{table}
-\begin{tabular}{rccc}
+\begin{tabular}{rcccp{4cm}}
     parameter & transformation & intercept & slopes \\
-    $\lambda$ & $ln~\lambda$ & $N(0, .5)$ &  $N(0, .35)$ \\
-    $\beta$ &  $ln~\beta^{-1}$ &  $N(0, .35)$ & $N(0, .35)$ \\
-    $\delta$ &  $ln~(\delta-1)$ & $N(0, .6)$  & $N(0, .35)$\\
-    $\lambda_{C_L}$ &  $ln~\lambda_{C_L}$ & $N(0, 1.5)$ & $-$ \\ 
-    $\lambda_{C_R}$ &  $ln~\lambda_{C_R}$ & $N(0, 1.5)$ & $N(0, .5)$ \\
-    $\beta$ &  $ln~\beta_C^{-1}$ & $N(0, .35)$   & $N(0, .35)$ \\
-    $\delta$ &  $ln~(\delta_C-1)$ & $N(0, .35)$  & $N(0, .35)$
+    $\lambda$ & $ln~\lambda$ & $N(0, .5)$ &  $N(0, .35)$  \\ % $N(0, .2)$ 
+    $\beta$ &  $ln~\beta^{-1}$ &  $N(0, .35)$ & $N(0, .35)$ \\ % $N(0, .2)$ 
+    $\delta$ &  $ln~(\delta)-1$ & $N(0, .6)$  & $N(0, .35)$\\ % $N(0, .2)$ 
+    $\lambda_{C_L}$ &  $-$ & $N(0, 1.5)$ & $-$ \\ % $N(0, .5)$
+    $\lambda_{C_R}$ &  $-$ & $N(0, 1.5)$ & $N(0, .5)$ \\
+    $\beta$ &  $ln~\beta_C^{-1}$ & $N(0, .35)$   & $N(0, .35)$ \\  % $N(0, .2)$ 
+    $\delta$ &  $ln~(\delta_C)-1$ & $N(0, .35)$  & $N(0, .35)$  % $N(0, .2)$ 
 \end{tabular}
-\caption{Priors and transformations for all model parameters.}
+\caption{Prior distributions and transformation applied to each model parameter.}
 \label{tab:priors}
 \end{table}
 
+\redx{
+Four sampling chains were run, with 4000 iterations each, after a burn-in of 1000 iterations.
+While all coefficients were estimated on log-scale, the model's posterior MCMC (Markov-Chain Monte Carlo) samples were used to compute credible intervals and posterior probabilities on the original scale (seconds and $d'$ units).
+Coefficient estimates will be presented along with $90\%$ and $80\%$ credible intervals.
+The posterior probability that a parameter is smaller than (or larger than) zero is above  90\% if the 80\% credible interval excludes zero, and larger than 95\% if the 90\% credible interval excludes zero. In addition to the credible intervals, the posterior probability of a particular parameter $\theta$ being smaller or larger than zero was computed where required.
+}
 
-
-Stan was used to run four sampling chains with 4000 iterations each, after a burn-in of 1000 iterations.
-While all coefficients were estimated on log-transformed parameters, the model's posterior MCMC were used to compute credible intervals and posterior probabilities on the original scale (seconds and $d'$ units). Unless qualified otherwise, all credible intervals in the results section are $90\%$ credible intervals.
-The posterior probability that a parameter is smaller than (or larger than) zero is above  90\% if the 80\% credible interval excludes zero, and larger than 95\% if the 90\% credible interval excludes zero. In addition to the credible intervals, the posterior probability of a particular parameter $\theta$ being smaller (or larger) than zero ($P(\theta < 0)$) was computed where required.   
-
-All data and code associated with this paper is available at \url{https://git.io/JEzwm}.
+\redx{
+A potential problem for this analysis method is the fact that successive responses on one trial are likely to be correlated in MR-SAT. This serial correlation is not accounted for in the method used here, because doing so would require making use of an approximation to the bivariate normal cumulative distribution function \citep[e.g.,][]{AlbersKallenberg:1994, Pan:2017, Tsay:2021}, which tend to be computationally intensive and numerically unstable. As a result, responses are modelled as independent, although it is currently not clear how or whether this may affect the results. Importantly, this simplification does not constitute a drawback of the present analysis method, since more commonly used methods for the analysis of MR-SAT \citep[e.g.,][]{ForakerEtAl:2018} data do not account for the correlation of successive responses.
+}
 
 \subsection{Results}
 
@@ -828,7 +928,7 @@ All data and code associated with this paper is available at \url{https://git.io
 %<!-- 
 %to-do: Subject 5 seems to have rather extreme estimates of intercept differences in the same 
 %direction of the group differences found in the hierarchical model. To check whether the 
-%results are largely driven by subject 5's data, we should probably compre this fit with a model 
+%results are largely driven by subject 5's data, we should probably compare this fit with a model 
 %without subject 5.
 %-->
 
@@ -853,6 +953,8 @@ data_rc_bysubj_dprime <- data_rc %>%
 <<r DataAnalysisPrepareModels, results='hide', echo=FALSE, eval=T, echo=FALSE>>=
 
 ### models fitted in "../scripts/2_models_create.R"
+
+# main model
 fit_brms <- readRDS("../workspace/model_fits/fit_all_uncorr_bysubj_2_4000.rds")
 
 names_fixef <- fixef(fit_brms) %>% rownames %>% paste0("b_", .)
@@ -862,6 +964,14 @@ contr <- extract_contrasts(data_rc)
 samp_asym <- samples_extract_asymptotes(contrasts = contr, samples = fit_samples)
 samp_invrate <- samples_extract_invrates(contrasts = contr, samples = fit_samples)
 samp_intercept <- samples_extract_intercept(contrasts = contr, samples = fit_samples)
+
+# priors-only model
+fit_brms_prior <- readRDS("../workspace/model_fits/fit_all_uncorr_bysubj_2_prior.rds")
+fit_samples_prior <- brms::posterior_samples(fit_brms_prior) #, par = names_fixef)
+
+samp_asym_prior <- samples_extract_asymptotes(contrasts = contr, samples = fit_samples_prior)
+samp_invrate_prior <- samples_extract_invrates(contrasts = contr, samples = fit_samples_prior)
+samp_intercept_prior <- samples_extract_intercept(contrasts = contr, samples = fit_samples_prior)
 
 @
 
@@ -878,6 +988,8 @@ if (!file.exists(fname_avg_dprime_plot)) {
 <<r DataAnalysisPlotCoefs1, results='hide', echo=FALSE, eval=T, echo=FALSE, message=FALSE, warning=FALSE>>=
 
 fname_coefs <- "../figures/figures/coefs.pdf"
+fname_coef_priors <- "../figures/figures/coef_priors.pdf"
+fname_coefs_corr <- "../figures/figures/coefs_corr.pdf"
 source("../figures/scripts_figures/figure_coefs.r")
 stopifnot(exists("intercepts"))
 stopifnot(exists("slopes"))
@@ -899,15 +1011,22 @@ source("../figures/scripts_figures/figure_bysubj_coefs.r")
 \begin{figure*}
 \centering
 \includegraphics[width=\textwidth]{../figures/figures/coefs.pdf}
-\caption{\label{fig:DataAnalysisPlotCoefs1}Credible intervals for the coefficients of a non-linear hierarchical Bayesian model, by speed-accuracy trade-off function parameter (intercept, 1/rate, asymptote). Thin lines represent $90\%$ CrIs and thick lines represent $80\%$ CrIs.}
+\caption{\label{fig:DataAnalysisPlotCoefs1}Credible intervals for the \textbf{posterior distributions} of the coefficients of a non-linear hierarchical Bayesian model, by speed-accuracy trade-off function parameter (intercept, 1/rate, asymptote). Thin lines represent $90\%$ CrIs and thick lines represent $80\%$ CrIs.}
 \end{figure*}
+
 
 Figure \ref{fig:AverageGroupFit} shows the average $d'$ by attachment condition at different lags along with the model predictions. At later lags, ambiguous conditions are responded to more accurately than both unambiguous conditions, with no appreciable differences between low and high attachment conditions.
 % Though the two excluded participants suggest that some people may not get high attachment at all.
 
-% todo: change theta to lambda, beta, delta
-Figure \ref{fig:DataAnalysisPlotCoefs1} shows the $95\%$ and $80\%$ credible intervals of the non-linear hierarchical Bayesian model of the speed-accuracy tradeoff functions according to equation \ref{eq:satf.repeated}.
-Its upper panels shows that the average intercept 
+\redx{
+A non-linear hierarchical Bayesian model of the speed-accuracy tradeoff function in equation % \ref{eq:satf.pyes}, \ref{eq:satf.criterion}, 
+\ref{eq:satf.repeated} was fitted to the participants' responses. All $\hat{R}$ estimates were $1.00$, indicating model convergence. 
+The estimated effective sample size ($ESS_{bulk}$ and $ESS_{tail}$)
+was larger than $4,000$ for all $\delta$ and $\beta^{-1}$ coefficients, larger than $2,500$ for all $\lambda$ coefficients except for the average $\lambda$, for which $ESS_{bulk}=967$ and $ESS_{tail}=2,096$.
+}
+%
+Figure \ref{fig:DataAnalysisPlotCoefs1} shows the $90\%$ and $80\%$ credible intervals of the non-linear hierarchical Bayesian model of the speed-accuracy tradeoff functions according to equation \ref{eq:satf.repeated}. 
+Its upper panels show that the average intercept 
 ($\delta$) was in the range 
 $\Sexpr{format_CrI(intercepts['intercept',])}\,sec$
 , the average reciprocal rate 
@@ -918,8 +1037,12 @@ $\Sexpr{format_CrI(intercepts['invrate',])}\, sec$
 $\Sexpr{format_CrI(intercepts['asymptote',])}$.
 
 The lower panels of figure \ref{fig:DataAnalysisPlotCoefs1} 
-show the estimates of the effects of the experimental manipulation on the parameters of the speed-accuracy tradeoff function. 
-The results show a smaller \textit{SATF intercept} in the ambiguous attachment condition than in 
+show the estimates of the effects of the experimental manipulation on the parameters of the speed-accuracy tradeoff function.\footnote{
+\redx{
+Figure \ref{fig:DataAnalysisPlotCoefs2} in the appendix shows the corresponding by-participant estimates of the same parameters based on the hierarchical model.}
+The coefficient estimates in it indicate 
+}
+a smaller \textit{SATF intercept} in the ambiguous attachment condition than in 
 the low attachment condition 
 (\Sexpr{format_CrI_and_post_prob(slopes['intercept__amb_m_low',])})
 or the high attachment condition 
@@ -952,55 +1075,144 @@ There was weak evidence for an interaction in \textit{SATF intercepts} suggestin
 
 \subsection{Discussion}
 
-The main finding in this experiment was that the SATF of sentences with ambiguous relative clause attachment is characterized by higher asymptotes and lower intercepts than the SATFs of either of the unambiguous conditions. This means that ambiguous sentences have a \textit{higher rate of successful processing} than their unambiguous counterparts, as well as \textit{shorter minimal processing times}.
+The main finding in this experiment was that the SATF of sentences with ambiguous relative clause attachment is characterized by higher asymptotes and lower intercepts than the SATFs of either of the unambiguous conditions. \redx{This means that ambiguous sentences have (i) a \textit{higher probability of successful processing} and (ii) \textit{shorter minimal processing times} compared to their unambiguous counterparts.}
 
-The latter finding is incompatible with either class of race models discussed here because both unlimited-capacity models (SMCM and URM) predict no differences in intercepts, while the limited-capacity cue-based retrieval account predicts either no difference in intercepts, or larger minimum processing times in ambiguous conditions. Moreover, unlimited-capacity race models predict a higher processing rate in ambiguous conditions, compared to their unambiguous counterparts, and while our findings regarding rates are not unambiguous in that they appear to be compatible with lower rates in ambiguous conditions or no differences in rates, they do not suggest a higher rate of processing in the ambiguous condition than in either unambiguous condition. Although the proposed mechanism for a coactivation model is compatible with both, lower intercepts, and higher asymptotes in ambiguous conditions, it does not appear to be compatible with the absence of a higher rate in ambiguous conditions.
-
-The only models compatible with this finding are the underspecification accounts because selective underspecification predicts shorter intercepts in the ambiguous condition compared to the unambiguous condition while the obligatory underspecification account is compatible with any outcome. The higher asymptotic accuracy in the ambiguous condition is compatible with all current accounts of the ambiguity advantage.
+The latter finding is incompatible with either class of race models discussed here because both unlimited-capacity models (SMCM and URM) predict no differences in intercept, while the limited-capacity cue-based retrieval account predicts either no difference in intercept, or larger minimum processing times in ambiguous conditions. Moreover, unlimited-capacity race models predict a higher processing rate in ambiguous conditions, compared to their unambiguous counterparts, and while our findings regarding rates are not unambiguous in that they appear to be compatible with lower rates in ambiguous conditions or no differences in rates, they do not suggest a higher rate of processing in the ambiguous condition than in either unambiguous condition. Although the proposed mechanism for a coactivation model is compatible with both lower intercepts, and higher asymptotes in ambiguous conditions, \redx{and while the present findings are compatible with a small increase in rates, they don't provide any evidence for one.
+%
+Both underspecification accounts are} compatible with the findings because selective underspecification predicts shorter intercepts in the ambiguous condition compared to the unambiguous condition while the obligatory underspecification account is compatible with any outcome. The higher asymptotic accuracy in the ambiguous condition is compatible with all current accounts of the ambiguity advantage.
 
 In addition to the main effects of attachment, we observed an interaction between attachment and relative pronoun gender, which indicated larger asymptotic accuracy differences between ambiguous and unambiguous sentences in masculine relative pronoun conditions than in the feminine relative pronoun conditions. This interaction is likely due to a local ambiguity in the masculine relative pronoun conditions: The German singular relative pronoun \textit{'der',} which was used to disambiguate attachment towards a masculine noun phrase is ambiguous between nominative masculine and dative feminine. While it is clearly disambiguated towards the masculine nominative by the fact that it is the only argument of a verb in the active voice, this disambiguation occurs at the second word of the relative clause. Although in German, nominative relative pronouns are significantly more frequent than dative relative pronouns
-\citep[e.g.,][]{LogacevVasishth:2012}, it is possible that the parser sometimes entertains a structure involving the (incorrect) attachment of the RC to a feminine noun phrase when one is present and fails to integrate a verb in active voice with no further arguments into a structure with a dative relativizer. As a result, processing may occasionally be impaired in the unambiguous conditions with a masculine relative pronoun resulting in lower asymptotes in those conditions, and thus in larger asymptote differences between ambiguous and unambiguous conditions with masculine relative pronouns.
+\citep[e.g.,][]{LogacevVasishth:2012}, it is possible that the parser sometimes entertains a \redx{feminine-dative interpretation of the relative pronoun. In consequence, it may attempt to form a} structure involving the (incorrect) attachment of the RC to a feminine noun phrase when one is present and a failure to integrate a verb in active voice with no further arguments into a structure with a dative relativizer. As a result, processing may occasionally be impaired in the unambiguous conditions with a masculine relative pronoun resulting in lower asymptotes in those conditions, and thus in larger asymptote differences between ambiguous and unambiguous conditions with masculine relative pronouns. 
+\redx{It is moreover possible that the effect is more pronounced in high attachment conditions than in low attachment conditions because the locally ambiguous relative pronoun is adjacent to the feminine noun phrase in the high attachment condition with a masculine relative pronoun (\ref{ExpStimuliFull}b), but not in (\ref{ExpStimuliFull}d), its low attachment counterpart.
+The effect of reanalysis due to local ambiguity may also explain the weak interaction between gender and attachment (\textit{ambiguous-high}) in intercept $\delta$, as effects of reanalysis on dynamics parameters have previously been attested \citep{BornkesselEtAl:2004, MartinMcElree:2018}.} 
 
+\redx{
+A common concern in the analysis of SAT data is that the estimates of the dynamics parameters $\beta^{-1}$ and $\delta$ in equation \ref{eq:satf.repeated} tend to be correlated in that a decrease in the function's goodness of fit due to a lower rate $\delta$ can (partially) be compensated for by an increase in $\beta^{-1}$, and vice versa \citep[e.g.,][]{ForakerEtAl:2018}.
+This is largely due to the fact that both parameters exert their greatest influence by jointly accounting for a relatively small number of response lags around the time when the SATF shows the largest amount of change (between $0\,sec$ and $2\,sec$ in the present experiment). This is in contrast to the asymptote $\lambda$ which, with a relatively small influence from both dynamics parameters, accounts for most of the variance in the responses from $2\,sec$ to $4.5\,sec$.
+Importantly, the correlation between $\beta^{-1}$ and $\delta$ may have two effects:  
+%
+Firstly, the shape of their joint likelihood function may complicate sampling or estimation as a result of the geometry of their joint likelihood function \citep[e.g.,][]{NicenboimEtAlBook:2021}.
+%
+Secondly, a strong correlation between two parameters in the posterior may indicate parameter \textit{unidentifiability} or \textit{weak identifiability}, and thus a model overparameterization \citep[e.g.,][]{GimenezEtAl:2009}. These issues will be addressed in turn. 
+}
+
+\redx{
+While the correlation between the average intercept and the average rate parameters was relatively weak ($r = -0.2$), all other coefficients exhibited a moderate amount of correlation ($r \approx -0.5$). Figure \ref{fig:DataAnalysisPlotCoefsCorr} in the appendix shows the correlation between posterior samples of the rate and intercept coefficients. Importantly, the estimated effective sample size ($ESS_{bulk}$ and $ESS_{tail}$) indicated a sufficient number of posterior samples required for inference, which along with an $\hat{R}$ of $1.00$ indicated no problems during the sampling process. 
+}
+
+\redx{
+However, the main parameter of interest (the effect of attachment on the intercept) may still be \textit{weakly unidentifiable};
+%, i.e., largely determined by its prior distribution. 
+\cite{GimenezEtAl:2009} define a parameter as \textit{unidentifiable} if more than one parameter value corresponds to the model's maximum likelihood for the data.
+This can happen in overparameterized models, when a decrease in a model's goodness of fit due to the change in one parameter can be compensated for by a corresponding change in another parameter. As a result, the parameter's posterior distribution is equal to its prior distribution. 
+A related notion is \textit{weak unidentifiability}, which arises when the data supply little information about one or multiple parameters. As a result, the posterior distribution of a weakly identifiable parameter is \textit{approximately} equal to its prior distribution \citep{GarrettZeger:2000}. An informal comparison between the prior distributions of the coefficients in Figure \ref{fig:DataAnalysisPlotPriorCoefs1} in the appendix, and their posterior distributions in Figure \ref{fig:DataAnalysisPlotCoefs1} shows that posterior and prior distributions are far from being approximately equal. \cite{GarrettZeger:2000} propose the metric $\tau$ in equation \ref{eq:tauTheta} as a formal measure of overlap between posterior and prior.  $\tau$ is in the range from $0$ to $1$ and can be interpreted as the amount of overlap between the prior and the posterior distribution. They suggest to interpret a $\tau$ of $0.35$ or more as an indicator of weak identifiability \cite[cf.][for a discussion]{GarrettZeger:2000, GimenezEtAl:2009}. We calculated $\tau$ for all fixed effects in our model and found that $\tau < 0.35$ for all $d'$-related parameters with the exception of all effects involving gender for the intercept $\delta$ ($\tau \approx 0.4$), and the reciprocal rate $\beta^-1$ ($0.44 \leq \tau \leq 0.5$).
+In sum, it appears that all coefficients for the main effect of attachment were identifiable, indicating that the relatively low correlations between rate and intercept did not affect statistical inference.
+}
+
+\begin{equation}
+    \tau = \int min(p(\theta), \pi(\theta|Y))\cdot d\theta 
+    \label{eq:tauTheta}
+\end{equation}
+
+%\footnote{
+%The consequences of the correlation between $\beta^{-1}$ and $\delta$ are similar to those of the correlation between the intercept and slope parameters $a$ and $b$ in linear models of the form $\hat{Y} = a + b\cdot X$ when the predictor $X$ is not centered. For example, the sampling distributions of $a$ and $b$ are correlated when the predictor $X$ is strictly positive. (e.g., \hl{Nicenboim et al}).
+%While the resulting shape of the likelihood function and the posterior distribution may complicate parameter estimation and sampling from the posterior, the model's identifiability largely depends on the data and not on the parameterization. For example, the standard error of $\hat{b}$ is unaffected by the model's parameterization, i.e., it is the same regardless of whether treatment contrasts are used (high correlation between parameters), or sum contrasts (low correlation between parameters). The situation is different for $\hat{a}$: Under a treatment contrast parameterization, the estimate of $a$ is based on fewer datapoints than under a sum contrast parameterization. Similarly,   
+%}
+
+
+% inflates the uncertainty of parameter estimates (relative to a hypothetical situation in which one of the parameters' `true' value is known), it does not result in biased estimates of $\beta^{-1}$ or $\delta$, similar to the \hl{ correlation between intercept and slope in LM}.
+%Moreover, \hl{the magnitude of the correlation and thus of the identifiability} of the model depends on the number and density of observations around \hl{the early part of the curve}: The \hl{better} each parameter can be estimated, the ... smaller the tradeoff(?) ... and the better the other can be estimated as well.
+% are largely influenced by relatively 
+%account for a relatively short  
+% Importantly, this is not an inherent property of the function, but is related to the fact that both parameters depend on relatively few data points in the "early" part of the SATF.
+%If we got more coverage there, we could estimate both parameters better.
+%
+%\hl{
+%In fact, I'm pretty sure that this is what happens here because raw data is analyzed -- but I'm not 100\% sure why.
+%When the correlation is very high, as it *probably* is in traditional analyses on aggregated data, this can be a serious problem because, similar to LMs with multicollinear(?) predictors, the parameter estimates are associated with substantially higher uncertainty, resulting in wider confidence intervals, for example. (The bad thing about those traditional approaches is that the uncertainy at the individual level is not propagated up the model, 
+%in contrast to this beautiful model. -- they also don't take into account that d' is a nonlinear function of response probability when they use adjR2 as a metric for fitting and comparing)    
+%
+%-> Basically, we see that (1) here sampling is fine (ESS), (2) correlation *may* be lower because raw responses are used, and (3) wide intervals will be wide, but they are narrow enough for *some* conclusions. 
+%}
 
 \section{General Discussion}
 
 The aim of the present study was to test the predictions of several competing accounts of the ambiguity advantage. While all accounts predict faster processing in ambiguous sentences compared to their unambiguous counterparts, they differ in their assumptions about the mechanisms that effect that speedup. As a result, they differ in their predictions regarding the completion time distributions of the attachment process in different attachment conditions, and thus in their predictions about differences in the speed-accuracy tradeoff functions (SATFs) in ambiguous and unambiguous conditions. Limited-capacity race models such as the URM and SMCM 
-\citep{VanGompelEtAl:2001, LogacevVasishth:2016} predict no differences in minimum completion times between ambiguous and unambiguous conditions, and thus the SATF intercepts. Meanwhile, the underspecification account \citep{SwetsEtAl:2008} and the class of limited-capacity race models are less definitive in their predictions and are therefore compatible with a wider range of findings. While the underspecification account is compatible with lower minimum processing times in ambiguous sentences, the unlimited-capacity race account predicts higher or equal minimum processing times. As a result, the underspecification account predicts the intercept in the ambiguous conditions to the smaller or to that of unambiguous conditions, unlimited-capacity race models predict larger or equal intercepts in the ambiguous conditions. While the class of possible coactivation accounts in general may differ in their specifics, the particular implementation of the coactivation account proposed here predicts lower intercepts and higher rates and asymptotes in ambiguous conditions.
+\citep{VanGompelEtAl:2001, LogacevVasishth:2016} predict no differences in minimum completion times between ambiguous and unambiguous conditions, and thus between their SATF intercepts. Meanwhile, the underspecification account \citep{SwetsEtAl:2008} and the class of limited-capacity race models are less definitive in their predictions. While the underspecification account is compatible with lower minimum processing times in ambiguous sentences, the unlimited-capacity race account predicts higher or equal minimum processing times. As a result, the underspecification account predicts either no difference in intercepts, or a smaller intercept in the ambiguous conditions, while limited-capacity race models predict larger or equal intercepts in the ambiguous condition. While the class of possible coactivation accounts in general may differ in their specifics, the particular implementation of the coactivation account proposed here predicts lower intercepts and higher rates and asymptotes in ambiguous conditions.
 
-An MR-SAT experiment in German provided evidence for lower SATF intercepts in ambiguous sentences compared to their unambiguous counterparts. The implication of this finding is that the minimum processing time is shorter in ambiguous than in unambiguous sentences. This is not compatible with either limited-capacity or unlimited-capacity race models because they predict either no difference in minimum processing times or larger minimum processing times in ambiguous structures. The only accounts compatible with the observed difference in intercepts are underspecification and the coactivation account. 
-However, not all of the coactivation account's predictions are empirically supported due to the absence of evidence for a higher rate in ambiguous conditions.
+An MR-SAT experiment in German provided evidence for (i) higher asymptotic accuracy and (ii) lower SATF intercepts in ambiguous sentences compared to their unambiguous counterparts. While the former finding is expected under all models considered here, the latter finding is not compatible with  limited-capacity or unlimited-capacity race models because they predict either no difference in minimum processing times or larger minimum processing times in ambiguous structures.
+The only accounts compatible with the observed difference in intercepts are underspecification and the coactivation account. 
 
-In consequence, the underspecification account is the only account that is fully consistent with the entire range of findings, including lower intercepts and higher asymptotes in ambiguous condition, as well as the absence of unambiguous differences in rates. This is in part due to the fact that the underspecification account is compatible with a relatively wide range of predictions. As a result, the present findings can be considered as tentative evidence for an underspecification-like mechanism in sentence processing, at least under specific task demands.
-
-Importantly, there are at least two possible instantiations of the underspecification account: The \textit{selective underspecification account} assumes that RC attachment is postponed until the point in the sentence where the parser can plausibly use all available information to resolve a structural ambiguity, which is when the parser decides whether to underspecify or to attach the RC. Under this account, a difference in minimum processing times between ambiguous and unambiguous conditions can be explained under the assumption that underspecification is not only faster on average than full RC attachment, but also has shorter minimum completion times. The \textit{obligatory underspecification account}, on the other hand, assumes that underspecification is always carried out at the relative pronoun if it does not disambiguate RC attachment, and therefore always precedes full RC attachment, as in examples (\ref{AA.Traxler}), (\ref{AA.Swets}), and (\ref{AA.Dillon}). In consequence, attachment is only carried out upon disambiguation of the sentence. In contrast to selective underspecification, the obligatory underspecification account makes no clear predictions for sentences like (\ref{BriefEx.Exp1}) which were used in the experiment presented here because its predictions depend on assumptions about the relative durations of underspecification on the one hand, and full RC attachment on the other. Thus, while it is compatible with the findings presented here under the right assumptions about process durations, it fails to account for the 
-\citet{DillonEtAl:2019} data, because unlike the stimuli in the present experiment, the sentences in (\ref{AA.Dillon}) were disambiguated at the second word, which means that according to obligatory underspecification, all conditions should be underspecified initially. Since the task demands in Dillon et al.'s experiment never required disambiguation, the obligatory underspecification account predicts that the underspecified representation could have been used to correctly judge acceptable sentences as acceptable in all attachment conditions with no between-condition differences in timing or accuracy.
-
-
-\section{Conclusion}
-
-In sum, the selective underspecification account appears to provide the most parsimonious account of the entire range of ambiguity-advantage related findings, as it can account for the presence of an ambiguity advantage in natural reading \citep{TraxlerEtAl:1998, VanGompelEtAl:2001, VanGompelEtAl:2005} and speeded-acceptability judgements \citep{DillonEtAl:2019}, for the potential task-dependence of the underspecification effect as argued by \citet{SwetsEtAl:2008}, as well as in SATF intercepts in the present study. However, it remains to be determined how exactly underspecified representations are structured and to what extent the notion of underspecification is compatible with models such as surprisal
-\citep{Hale:2001, Levy:2008} or the self-organized sentence account
-\citep[e.g.,][]{TaborHutchins:2004, Smith:2018, ChoGoldrickSmolensky:2020}.
-
-\begin{figure*}
-\centering
-\includegraphics[width=\textwidth]{../figures/figures/coefs_bysubj.pdf}
-\caption{\label{fig:DataAnalysisPlotCoefs3}By-subject credible intervals for the coefficients of a non-linear hierarchical Bayesian model, by speed-accuracy trade-off function parameter (intercept, 1/rate, asymptote). Thin lines represent $90\%$ CrIs and thick lines represent $80\%$ CrIs.
+\redx{
+Importantly, there are two possible instantiations of the underspecification account:
+%
+The \textit{obligatory underspecification account}, assumes that underspecification is always carried out at the relative pronoun if it does not disambiguate RC attachment, and therefore always precedes full RC attachment, as in examples (\ref{AA.Traxler}), (\ref{AA.Swets}), and (\ref{AA.Dillon}). In consequence, attachment is only carried out upon disambiguation of the sentence. In contrast to selective underspecification, the obligatory underspecification account makes no clear predictions for sentences like (\ref{BriefEx.Exp1}) which were used in the experiment because its predictions depend on assumptions about the relative durations of underspecification of RC attachment on the one hand and full RC attachment on the other. Thus, while it is compatible with the findings presented here under the right assumptions about process durations, it fails to account for the 
+\citet{DillonEtAl:2019} data, because unlike the stimuli in the present experiment, the sentences in (\ref{AA.Dillon}) were disambiguated at the second word, which means that according to obligatory underspecification, all conditions should have been underspecified initially. Since the task demands in Dillon et al.'s experiment never required disambiguation, the obligatory underspecification account predicts that the underspecified representation could have been used to correctly judge acceptable sentences as acceptable in all attachment conditions with no between-condition differences in timing or accuracy. Thus, Dillon et al.'s findings provide evidence against the obligatory underspecification account.
 }
-\end{figure*}
+
+\redx{
+The \textit{selective underspecification account}, on the other hand, assumes that RC attachment is postponed until the point in the sentence where the parser can plausibly use all available information to resolve a structural ambiguity, which is when the parser decides whether to underspecify or to attach the RC. Under this account, a difference in minimum processing times between ambiguous and unambiguous conditions can be explained under the assumption that underspecification is not only faster on average than full RC attachment, but also has shorter minimum completion times.
+}
+
+\redx{
+While the underspecification account may appear to match the SAT findings more closely than the coactivation in that it is compatible with the absence of a difference in processing rates, the absence of evidence for such a difference does not necessarily constitute evidence against it. This is because firstly, our findings are compatible with a higher rate (smaller $\beta^{-1}$) in the ambiguous condition, although this effect is likely to be relatively small. Secondly, the magnitude of the predicted difference in processing rates is difficult to quantify without a computational implementation of the coactivation model.
+}
+
+\redx{
+In consequence, both the selective underspecification and the coactivation model can account for a range of ambiguity-advantage related findings, including the presence of an ambiguity advantage in natural reading \citep{TraxlerEtAl:1998, VanGompelEtAl:2001, VanGompelEtAl:2005} and speeded-acceptability judgements \citep{DillonEtAl:2019}, as well as in SATF intercepts in the present study. 
+It remains to be determined to what extent the coactivation model can account for the potential task-dependence of the underspecification effect argued for by \citet{SwetsEtAl:2008}.
+}
+
+\redx{
+Importantly, both accounts currently require \textit{ad hoc} assumptions in order to account for those findings. Specifically, the coactivation account needs to assume a small difference in rates between ambiguous and unambiguous sentences in order to account for the findings in the present experiment.
+The underspecification account, on the other hand, needs to stipulate that the underspecification of RC attachment is not only faster than full RC attachment \textit{on average}, but also that its \textit{minimum} duration is shorter. Moreover, it needs to assume that underspecification of RC attachment has a higher probability of being executed successfully. 
+A further non-trivial assumption of the underspecification account is that unambiguous sentences cannot be underspecified. While that is unsurprising on the surface, as an underspecified structure cannot constitute a verdical representation of an unambiguous sentence, such a representation is arguably \textit{`good enough'} for a range of tasks \citep[e.g.,][]{FerreiraEtAl:2002} which begs the question of why a \textit{`good enough'} parser is unable to make use of this operation on unambiguous sentences.
+At present, these assumptions do not appear to be independently motivated. However, they may ultimately follow from independent principles. For instance, it is possible that underspecified syntactic representations are not semantically interpreted, in which case both timing assumptions of the selective underspecification account follow from the presence of an additional process in the unambiguous conditions, while the lower asymptotic accuracy in the unambiguous conditions may follow from the fact that semantically interpreted unambiguous sentences can be rejected for extra-syntactic reasons, while the uninterpreted ambiguous sentences cannot.
+Further theoretical work is needed to determine determined how exactly underspecified or coactive structures are represented and to what extent the notions of underspecification or coactivation is compatible with models such as surprisal \citep{Hale:2001, Levy:2008} or the self-organized sentence account \citep[e.g.,][]{TaborHutchins:2004, Smith:2018, ChoGoldrickSmolensky:2020}.
+}
+
 
 %\usepackage{biblatex}
 %\addbibresource{paper.bib}
 \bibliographystyle{apacite} 
 %\bibliography{papers.bib}
-\bibliography{pavelbibliography, references, techbibliography} % 
+%\bibliography{pavelbibliography, references, techbibliography} % 
+\bibliography{minbib, techbibliography} % 
 %\bibliographystyle{acl_natbib}
 
 %`r citep(citation("brms"))`
 
-<<r write_citations, eval =F, cache=FALSE, include=FALSE>>=
-write.bibtex(file="references.bib")
-@
+
+\appendix
+
+\section
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{../figures/figures/coef_priors.pdf}
+\caption{\label{fig:DataAnalysisPlotPriorCoefs1} Credible intervals for the \textbf{prior distributions} for coefficients of a non-linear hierarchical Bayesian model, by speed-accuracy trade-off function parameter (intercept, 1/rate, asymptote). Thin lines represent $90\%$ CrIs and thick lines represent $80\%$ CrIs. Priors for all coefficients involving pairwise differences between the ambiguous condition and an unambiguous conditions are wider than the prior for the effect of gender because they involve two coefficients, as the model was estimated with sum contrasts for attachment.
+}
+\end{figure*}
+
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{../figures/figures/coefs_bysubj.pdf}
+\caption{\label{fig:DataAnalysisPlotCoefs2}By-subject credible intervals for the coefficients of a non-linear hierarchical Bayesian model, by speed-accuracy trade-off function parameter (intercept, 1/rate, asymptote). Thin lines represent $90\%$ CrIs and thick lines represent $80\%$ CrIs. The y-axis represents participant IDs.
+}
+\end{figure*}
+
+
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{../figures/figures/coefs_corr.pdf}
+\caption{\label{fig:DataAnalysisPlotCoefsCorr}
+Heatmaps of posterior samples for the coefficients for the SATF intercept  ($\delta$, x-axis), and reciprocal rate ($\beta^{-1}$, y-axis).}
+\end{figure*}
+  
+
+
 
 \end{document}
 
